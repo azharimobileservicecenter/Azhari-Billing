@@ -76,6 +76,16 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
 .toast.on{opacity:1}
 .ovl{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}.ovl .card{width:100%;max-width:320px}
 #login{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;align-items:center;justify-content:center;padding:20px}#login .card{width:100%;max-width:340px;padding:18px}
+.c2{padding:10px;margin:7px 0}
+.sm2{min-height:34px;padding:0 10px;font-size:13px}
+#dt{font-size:13px;padding:9px 6px}
+.dt summary{font-size:12px;color:var(--p);font-weight:600;padding:8px 0 2px;cursor:pointer;list-style:none}.dt summary::-webkit-details-marker{display:none}
+.mini{font-size:11.5px;color:var(--m);margin-top:8px}.mini b{color:var(--t)}
+.duebox{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding-bottom:6px}.duebox b{color:var(--r);font-size:17px}
+.it .l{margin:5px 0 1px;font-size:9.5px}.it .row{gap:6px}
+.r4 input{padding:8px 6px;text-align:center}
+.ipf{font-size:11px;flex:1;text-align:center}.ipf b{color:var(--t)}
+.x{min-height:26px;min-width:28px;padding:0;font-size:12px;border-radius:7px}
 #scan{position:fixed;inset:0;background:#000;display:none;flex-direction:column;z-index:40}
 #scan video{flex:1;width:100%;object-fit:cover}
 </style></head><body><header class="bar"><div class="ttl"><div class="brand">Azhari Mobile Service Center</div><div class="sub" id="ttl">New Bill</div></div><span class="dot" id="dot"></span>
@@ -84,21 +94,13 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
 <div class="w">
 <div class="tab on" id="tab0">
  <div id="eb" class="card" style="display:none"><div class="h" style="color:#c2410c">Edit mode</div><b id="ebn"></b><button class="d" style="margin-top:8px;width:100%" onclick="reset()">Cancel edit</button></div>
- <div class="card"><div class="row"><div><label class="l" style="margin-top:0">Invoice no</label><input id="inv" readonly></div><div><label class="l" style="margin-top:0">Date</label><input id="dt" type="datetime-local"></div></div></div>
- <div class="card"><div class="h">Customer</div>
-  <label class="l" style="margin-top:0">Name</label><input id="cn" list="cl" placeholder="Customer name" onchange="fill()">
-  <label class="l">Phone</label><input id="cp" list="cl" inputmode="tel" placeholder="Mobile number" onchange="fill()">
-  <label class="l">Address (optional)</label><input id="ca" placeholder="Address">
-  <datalist id="cl"></datalist></div>
- <div class="card"><div class="ih"><div class="h" style="margin:0">Items</div><div class="row" style="flex:none;width:64%"><button class="g" onclick="items.push(blank());rItems()">+ Item</button><button onclick="SM='bill';scan()">Scan</button></div></div><div id="items"></div></div>
- <div class="card"><div class="h">Summary</div>
-  <div class="tot"><span>Subtotal</span><span id="sub"></span></div>
-  <div class="tot"><span>Discount</span><span id="dis"></span></div>
-  <div class="tot big"><b>Total</b><b id="tot"></b></div>
-  <div class="tot"><span class="m">Profit (sirf aapko dikhega)</span><b id="pft" style="color:var(--p)"></b></div>
-  <label class="l">Amount paid</label><input id="paid" type="number" inputmode="decimal" placeholder="0" oninput="calc()">
-  <div class="tot big"><b>Due</b><b id="due" style="color:var(--r)"></b></div></div>
- <div class="card"><label class="l" style="margin-top:0">Terms</label><textarea id="terms" rows="2" onchange="DB.terms=this.value;save()"></textarea></div>
+ <div class="card c2"><div class="row"><div><label class="l" style="margin-top:0">Invoice</label><input id="inv" readonly></div><div style="flex:1.5"><label class="l" style="margin-top:0">Date</label><input id="dt" type="datetime-local"></div></div>
+  <div class="row"><div><label class="l">Customer name</label><input id="cn" list="cl" placeholder="Name" onchange="fill()"></div><div><label class="l">Phone</label><input id="cp" list="cl" inputmode="tel" placeholder="Mobile" onchange="fill()"></div></div>
+  <details id="dAddr" class="dt"><summary>+ Address (optional)</summary><input id="ca" placeholder="Address"></details><datalist id="cl"></datalist></div>
+ <div class="card c2"><div class="ih"><div class="h" style="margin:0">Items</div><div class="row" style="flex:none;width:58%"><button class="g sm2" onclick="items.push(blank());rItems()">+ Item</button><button class="sm2" onclick="SM='bill';scan()">Scan</button></div></div><div id="items"></div></div>
+ <div class="card c2"><div class="row" style="align-items:flex-end"><div><label class="l" style="margin-top:0">Amount paid</label><input id="paid" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div><div class="duebox"><span class="l" style="margin:0">Due</span><b id="due"></b></div></div>
+  <div class="mini">Sub <span id="sub"></span> &middot; Disc <span id="dis"></span> &middot; Total <b id="tot"></b> &middot; Profit <b id="pft"></b></div>
+  <details class="dt"><summary>Terms</summary><textarea id="terms" rows="2" onchange="DB.terms=this.value;save()"></textarea></details></div>
 </div>
 
 <div class="tab" id="tab1"><div class="card" id="hsum"></div>
@@ -122,7 +124,7 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
  <div class="card"><div class="h">Account</div><button class="d" style="width:100%" onclick="doLogout()">Logout</button></div>
  <div class="card"><div class="h">Scan sound</div><button class="g" id="sndb" style="width:100%" onclick="togSnd()"></button></div>
  <div class="card"><div class="h">Danger zone</div><p class="m" style="margin:0 0 10px">Reset se saare bills, customers aur products delete ho jate hain aur invoice AZH1 se shuru hota hai. PIN lagta hai.</p><button class="d" style="width:100%" onclick="doReset()">Reset app</button></div>
- <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v9</div></div>
+ <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v10</div></div>
 </div>
 </div>
 
@@ -170,18 +172,15 @@ addEventListener('popstate',e=>{const q=e.state||{};if(scanning)stopScan();
 
 /* form */
 function rItems(){
- $('items').innerHTML=items.map((x,i)=>`<div class="it"><div class="ith"><b>Item ${i+1}</b><button class="d sm" onclick="items.splice(${i},1);if(!items.length)items.push(blank());rItems()">Remove</button></div>
- <label class="l">Item name</label><input placeholder="e.g. Tempered Glass" value="${esc(x.n)}" oninput="items[${i}].n=this.value">
- <label class="l">Sr no (optional)</label><input placeholder="N/A" value="${esc(x.s)}" oninput="items[${i}].s=this.value">
- <div class="row"><div><label class="l">Rate</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.r)}" oninput="items[${i}].r=this.value;calc()"></div><div><label class="l">Qty</label><input type="number" inputmode="numeric" placeholder="1" value="${esc(x.q)}" oninput="items[${i}].q=this.value;calc()"></div><div><label class="l">Discount Rs</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.d)}" oninput="items[${i}].d=this.value;calc()"></div></div>
- <label class="l">Cost price per piece (private)</label><input type="number" inputmode="decimal" placeholder="Optional" value="${esc(x.k)}" oninput="items[${i}].k=this.value;calc()">
- <div class="tot" style="margin-top:6px"><span class="m">Item total</span><b id="t${i}"></b></div><div class="tot"><span class="m">Profit</span><b id="pf${i}"></b></div></div>`).join('');calc()}
+ $('items').innerHTML=items.map((x,i)=>`<div class="it"><div class="ith"><b>Item ${i+1}</b><span class="m ipf">Total <b id="t${i}"></b> &middot; Profit <b id="pf${i}"></b></span><button class="d x" onclick="items.splice(${i},1);if(!items.length)items.push(blank());rItems()">&#10005;</button></div>
+ <div class="row"><div style="flex:2"><label class="l">Item name</label><input placeholder="e.g. Tempered Glass" value="${esc(x.n)}" oninput="items[${i}].n=this.value"></div><div><label class="l">Sr no</label><input placeholder="N/A" value="${esc(x.s)}" oninput="items[${i}].s=this.value"></div></div>
+ <div class="row r4"><div><label class="l">Rate</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.r)}" oninput="items[${i}].r=this.value;calc()"></div><div><label class="l">Qty</label><input type="number" inputmode="numeric" placeholder="1" value="${esc(x.q)}" oninput="items[${i}].q=this.value;calc()"></div><div><label class="l">Disc</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.d)}" oninput="items[${i}].d=this.value;calc()"></div><div><label class="l">Cost</label><input type="number" inputmode="decimal" placeholder="-" value="${esc(x.k)}" oninput="items[${i}].k=this.value;calc()"></div></div></div>`).join('');calc()}
 const cur=()=>({id:editId||'AZH'+DB.next,date:$('dt').value,cn:$('cn').value.trim(),cp:$('cp').value.trim(),ca:$('ca').value.trim(),items:items.filter(x=>x.n||+x.r).map(x=>({...x,n:x.n||'Item'})),paid:+$('paid').value||0,terms:$('terms').value.trim()});
 function tots(b){let sub=0,disc=0;b.items.forEach(x=>{sub+=(+x.r||0)*(+x.q||0);disc+=+x.d||0});const total=sub-disc;return{sub,disc,total,due:total-(+b.paid||0)}}
 function prof(b){let p=0,known=0,miss=0;b.items.forEach(x=>{if(x.k===''||x.k==null)miss++;else{known++;p+=lt(x)-(+x.k||0)*(+x.q||0)}});return{p,known,miss}}
 function calc(){items.forEach((x,i)=>{const e=$('t'+i);if(e)e.textContent=f(lt(x));const g=$('pf'+i);if(g)g.textContent=(x.k===''||x.k==null)?'-':'₹'+f(lt(x)-(+x.k||0)*(+x.q||0))});const t=tots(cur());$('sub').textContent=f(t.sub);$('dis').textContent=f(t.disc);$('tot').textContent=$('tot2').textContent=f(t.total);$('due').textContent=f(t.due);const pr=prof(cur());$('pft').textContent=pr.known?'₹'+f(pr.p)+(pr.miss?' *':''):'-'}
-function fill(){const p=$('cp').value.trim(),n=$('cn').value.trim();const m=DB.bills.slice().reverse().find(b=>(p&&b.cp===p)||(!p&&n&&b.cn===n));if(m){if(!$('cn').value)$('cn').value=m.cn;if(!$('cp').value)$('cp').value=m.cp;if(!$('ca').value)$('ca').value=m.ca||''}}
-function reset(){editId=null;$('eb').style.display='none';items=[blank()];['cn','cp','ca','paid'].forEach(k=>$(k).value='');$('inv').value='AZH'+DB.next;$('dt').value=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);$('terms').value=DB.terms;
+function fill(){const p=$('cp').value.trim(),n=$('cn').value.trim();const m=DB.bills.slice().reverse().find(b=>(p&&b.cp===p)||(!p&&n&&b.cn===n));if(m){if(!$('cn').value)$('cn').value=m.cn;if(!$('cp').value)$('cp').value=m.cp;if(!$('ca').value)$('ca').value=m.ca||'';$('dAddr').open=!!$('ca').value}}
+function reset(){editId=null;$('eb').style.display='none';$('dAddr').open=false;items=[blank()];['cn','cp','ca','paid'].forEach(k=>$(k).value='');$('inv').value='AZH'+DB.next;$('dt').value=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);$('terms').value=DB.terms;
  const s=new Set();DB.bills.forEach(b=>{if(b.cn)s.add(b.cn);if(b.cp)s.add(b.cp)});$('cl').innerHTML=[...s].map(v=>`<option value="${esc(v)}">`).join('');rItems()}
 async function sv(p){const b=cur();if(!b.items.length){alert('Kam se kam ek item daalo');return}
  b.items.forEach(x=>{if(x.c)DB.prod[x.c]=mkp(x.n,x.r,x.k===''||x.k==null?null:x.k)});if(editId){const i=DB.bills.findIndex(x=>x.id===editId);if(i>=0)DB.bills[i]=b;else DB.bills.push(b);save();cloudB(b);reset();tab(1);st('Bill update ho gaya '+b.id)}
@@ -298,7 +297,7 @@ const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOStr
 function hToday(){$('hf').value=$('ht').value=today();rHist()}
 function hClear(){$('hq').value=$('hf').value=$('ht').value='';rHist()}
 function startEdit(id){const b=DB.bills.find(x=>x.id===id);if(!b)return;editId=id;items=b.items.map(x=>({k:'',...x}));
- $('cn').value=b.cn||'';$('cp').value=b.cp||'';$('ca').value=b.ca||'';$('paid').value=b.paid||'';$('dt').value=b.date||'';$('terms').value=b.terms||'';$('inv').value=id;
+ $('cn').value=b.cn||'';$('cp').value=b.cp||'';$('ca').value=b.ca||'';$('dAddr').open=!!b.ca;$('paid').value=b.paid||'';$('dt').value=b.date||'';$('terms').value=b.terms||'';$('inv').value=id;
  $('eb').style.display='block';$('ebn').textContent=id;tab(0);rItems();window.scrollTo(0,0)}
 function act(id,k){const b=DB.bills.find(x=>x.id===id);if(k==='p')prt(b);if(k==='i')img(b);if(k==='f')pdf(b);
  if(k==='r'){const a=prompt('Kitna mila? (Rs)');if(+a>0){b.paid=(+b.paid||0)+ +a;save();cloudB(b);rHist()}}
