@@ -126,7 +126,7 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
  <div class="card"><div class="h">App MPIN</div><p class="m" id="mpst" style="margin:0 0 10px"></p><div class="row" id="mpb"></div></div>
  <div class="card"><div class="h">Scan sound</div><button class="g" id="sndb" style="width:100%" onclick="togSnd()"></button></div>
  <div class="card"><div class="h">Danger zone</div><p class="m" style="margin:0 0 10px">Reset se saare bills, customers aur products delete ho jate hain aur invoice AZH1 se shuru hota hai. PIN lagta hai.</p><button class="d" style="width:100%" onclick="doReset()">Reset app</button></div>
- <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v11</div></div>
+ <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v12</div></div>
 </div>
 </div>
 
@@ -189,7 +189,7 @@ async function sv(p,wa){const b=cur();if(!b.items.length){alert('Kam se kam ek i
  if(wa&&!waNum(b.cp)){alert('WhatsApp ke liye customer ka sahi phone number daalo');return}
  b.items.forEach(x=>{if(x.c)DB.prod[x.c]=mkp(x.n,x.r,x.k===''||x.k==null?null:x.k)});if(editId){const i=DB.bills.findIndex(x=>x.id===editId);if(i>=0)DB.bills[i]=b;else DB.bills.push(b);save();cloudB(b);reset();tab(1);st('Bill update ho gaya '+b.id)}
  else{DB.bills.push(b);DB.next++;save();cloudB(b);reset();st('Saved '+b.id)}
- if(wa)openWA(b,waNum(b.cp));
+ if(wa)shareWA(b,waNum(b.cp));
  if(p)await prt(b)}
 
 /* receipt text */
@@ -232,17 +232,71 @@ const blob=(c,t)=>new Promise(r=>c.toBlob(r,t,.92));
 async function out(bl,name,b){const file=new File([bl],name,{type:bl.type});
  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:b.id,text:SHOP.n+' - '+b.id});return}}catch(e){if(e.name==='AbortError')return}
  const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=name;a.click()}
-async function img(b){out(await blob(canvas(b),'image/png'),b.id+'.png',b)}
+async function img(b){out(await blob(await invCanvas(b),'image/png'),b.id+'.png',b)}
 async function pdf(b){
- const c=canvas(b),j=new Uint8Array(await(await blob(c,'image/jpeg')).arrayBuffer()),X=c.width,Y=c.height,parts=[],offs=[];let off=0;
+ const c=await invCanvas(b),j=new Uint8Array(await(await blob(c,'image/jpeg')).arrayBuffer()),X=c.width,Y=c.height,parts=[],offs=[];let off=0;
  const add=x=>{const u=typeof x==='string'?new TextEncoder().encode(x):x;parts.push(u);off+=u.length},obj=(n,s)=>{offs[n]=off;add(n+' 0 obj\n'+s+'\nendobj\n')};
  add('%PDF-1.4\n');obj(1,'<</Type/Catalog/Pages 2 0 R>>');obj(2,'<</Type/Pages/Kids[3 0 R]/Count 1>>');
- obj(3,`<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${X} ${Y}]/Resources<</XObject<</I 4 0 R>>>>/Contents 5 0 R>>`);
+ obj(3,`<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${X/2} ${Y/2}]/Resources<</XObject<</I 4 0 R>>>>/Contents 5 0 R>>`);
  offs[4]=off;add(`4 0 obj\n<</Type/XObject/Subtype/Image/Width ${X}/Height ${Y}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${j.length}>>\nstream\n`);add(j);add('\nendstream\nendobj\n');
- const cs=`q ${X} 0 0 ${Y} 0 0 cm /I Do Q`;obj(5,`<</Length ${cs.length}>>\nstream\n${cs}\nendstream`);
+ const cs=`q ${X/2} 0 0 ${Y/2} 0 0 cm /I Do Q`;obj(5,`<</Length ${cs.length}>>\nstream\n${cs}\nendstream`);
  const x=off;add('xref\n0 6\n0000000000 65535 f \n');for(let i=1;i<6;i++)add(String(offs[i]).padStart(10,'0')+' 00000 n \n');
  add(`trailer\n<</Size 6/Root 1 0 R>>\nstartxref\n${x}\n%%EOF`);
  out(new Blob(parts,{type:'application/pdf'}),b.id+'.pdf',b)}
+
+/* invoice image (for Image / PDF / WhatsApp) */
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+async function invCanvas(b){
+ try{await document.fonts.load('700 20px Inter');await document.fonts.load('400 14px Inter')}catch(e){}
+ const W=720,P=36,S=2,F="Inter,'Segoe UI',Roboto,Arial,sans-serif",t=tots(b),R='\u20b9';
+ const c=document.createElement('canvas'),g=c.getContext('2d');
+ const wrap=(txt,w,fn)=>{g.font=fn;const o=[];String(txt||'').split('\n').forEach(par=>{let ln='';par.split(' ').forEach(wd=>{const x=ln?ln+' '+wd:wd;if(ln&&g.measureText(x).width>w){o.push(ln);ln=wd}else ln=x});o.push(ln)});return o};
+ const qR=372,rR=476,dR=576,aR=676,nW=qR-64-P;
+ const addr=wrap(SHOP.a,W-2*P,'400 15px '+F),band=100+addr.length*20;
+ const cl=[];if(b.cp)cl.push(b.cp);wrap(b.ca||'',300,'400 14px '+F).filter(Boolean).forEach(x=>cl.push(x));
+ const info=Math.max(cl.length*20+64,100)+10;
+ const rows=b.items.map(x=>{const nl=wrap(x.n,nW,'600 16px '+F);return{x,nl,h:nl.length*21+(x.s?18:0)+16}});
+ const terms=wrap('Terms: '+(b.terms||''),W-2*P-24,'400 13px '+F),th=terms.length*19+22;
+ const L=[['Subtotal',f(t.sub)]];if(t.disc>0)L.push(['Discount','-'+f(t.disc)]);
+ const totH=18+L.length*26+14+36+56;
+ const H=band+30+info+34+rows.reduce((a,r)=>a+r.h,0)+totH+14+th+16+40+8+10;
+ c.width=W*S;c.height=H*S;g.scale(S,S);
+ g.fillStyle='#fff';g.fillRect(0,0,W,H);
+ g.fillStyle='#0b7a5a';g.fillRect(0,0,W,band);
+ g.fillStyle='#fff';g.textBaseline='alphabetic';g.textAlign='left';g.font='700 28px '+F;g.fillText(SHOP.n,P,52);
+ g.font='400 15px '+F;addr.forEach((l,i)=>g.fillText(l,P,80+i*20));g.fillText(SHOP.p,P,80+addr.length*20);
+ let y=band+30;
+ g.fillStyle='#94a3b8';g.font='700 11px '+F;g.fillText('BILLED TO',P,y);
+ g.fillStyle='#0f172a';g.font='700 19px '+F;g.fillText(b.cn||'Customer',P,y+24);
+ g.fillStyle='#475569';g.font='400 14px '+F;cl.forEach((l,i)=>g.fillText(l,P,y+46+i*20));
+ g.textAlign='right';g.fillStyle='#94a3b8';g.font='700 11px '+F;g.fillText('INVOICE',W-P,y);
+ g.fillStyle='#0f172a';g.font='700 22px '+F;g.fillText(b.id,W-P,y+26);
+ g.fillStyle='#475569';g.font='400 14px '+F;g.fillText(fd(b.date),W-P,y+46);
+ const due=t.due>0.005,bt=due?'DUE':'PAID';g.font='700 13px '+F;const bw=g.measureText(bt).width+28;
+ g.fillStyle=due?'#fde8ec':'#dcf1e6';rr(g,W-P-bw,y+58,bw,26,13);g.fill();g.fillStyle=due?'#c62839':'#0b7a5a';g.textAlign='center';g.fillText(bt,W-P-bw/2,y+76);
+ y+=info;
+ g.fillStyle='#f1f5f9';g.fillRect(P,y,W-2*P,34);g.fillStyle='#64748b';g.font='700 11px '+F;g.textAlign='left';g.fillText('ITEM',P+12,y+22);
+ g.textAlign='right';[['QTY',qR],['RATE',rR],['DISC',dR],['AMOUNT',aR]].forEach(([l,x])=>g.fillText(l,x,y+22));y+=34;
+ rows.forEach(r=>{const x=r.x;g.textAlign='left';g.fillStyle='#0f172a';g.font='600 16px '+F;r.nl.forEach((l,j)=>g.fillText(l,P+12,y+24+j*21));
+  if(x.s){g.fillStyle='#94a3b8';g.font='400 12px '+F;g.fillText('SN: '+x.s,P+12,y+24+(r.nl.length-1)*21+17)}
+  g.textAlign='right';g.fillStyle='#334155';g.font='400 15px '+F;g.fillText(String(+x.q||0),qR,y+24);g.fillText(f(x.r),rR,y+24);g.fillText(+x.d>0?'-'+f(x.d):'-',dR,y+24);
+  g.fillStyle='#0f172a';g.font='700 15px '+F;g.fillText(f(lt(x)),aR,y+24);
+  y+=r.h;g.fillStyle='#e5e7eb';g.fillRect(P,y-1,W-2*P,1)});
+ y+=18;const lx=W-P-260;
+ L.forEach(([a,v])=>{g.textAlign='left';g.fillStyle='#64748b';g.font='400 15px '+F;g.fillText(a,lx,y+14);g.textAlign='right';g.fillStyle='#0f172a';g.fillText(v,aR,y+14);y+=26});
+ g.fillStyle='#0b7a5a';g.fillRect(lx,y-4,W-P-lx-4,2);y+=14;
+ g.textAlign='left';g.fillStyle='#0f172a';g.font='700 19px '+F;g.fillText('Total',lx,y+14);g.textAlign='right';g.fillText(R+f(t.total),aR,y+14);y+=36;
+ [['Paid',R+f(b.paid),'#0f172a'],['Due',R+f(t.due),due?'#c62839':'#0b7a5a']].forEach(([a,v,col])=>{g.textAlign='left';g.fillStyle='#64748b';g.font='400 15px '+F;g.fillText(a,lx,y+14);g.textAlign='right';g.fillStyle=col;g.font='700 16px '+F;g.fillText(v,aR,y+14);y+=28});
+ y+=14;g.fillStyle='#f8fafc';rr(g,P,y,W-2*P,th,10);g.fill();g.fillStyle='#64748b';g.font='400 13px '+F;g.textAlign='left';terms.forEach((l,i)=>g.fillText(l,P+12,y+22+i*19));y+=th+16;
+ g.textAlign='center';g.fillStyle='#94a3b8';g.font='400 13px '+F;g.fillText('Thank you',W/2,y+16);
+ g.fillStyle='#0b7a5a';g.fillRect(0,H-8,W,8);
+ c.__H=H;c.__maxY=y+16;return c}
+function waCap(b){const t=tots(b),R='\u20b9';return '*'+SHOP.n+'*\nInvoice: '+b.id+' | '+fd(b.date)+'\nTotal: '+R+f(t.total)+'\nPaid: '+R+f(b.paid)+'\n*Due: '+R+f(t.due)+'*'}
+async function shareWA(b,num){
+ try{const bl=await blob(await invCanvas(b),'image/png'),file=new File([bl],b.id+'.png',{type:'image/png'});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],text:waCap(b)});return}}
+ catch(e){if(e&&e.name==='AbortError')return}
+ openWA(b,num)}
 
 /* barcode scan */
 let stream,scanning=false,SM='bill';
@@ -344,7 +398,7 @@ function startEdit(id){const b=DB.bills.find(x=>x.id===id);if(!b)return;editId=i
  $('eb').style.display='block';$('ebn').textContent=id;tab(0);rItems();window.scrollTo(0,0)}
 function act(id,k){const b=DB.bills.find(x=>x.id===id);if(k==='p')prt(b);if(k==='i')img(b);if(k==='f')pdf(b);
  if(k==='r'){const a=prompt('Kitna mila? (Rs)');if(+a>0){b.paid=(+b.paid||0)+ +a;save();cloudB(b);rHist()}}
- if(k==='w'){let n=waNum(b.cp);if(!n){const q=prompt('Customer ka WhatsApp number:');n=waNum(q);if(!n){if(q!==null)alert('Sahi number daalo');return}b.cp=q.trim();save();cloudB(b)}openWA(b,n)}
+ if(k==='w'){let n=waNum(b.cp);if(!n){const q=prompt('Customer ka WhatsApp number:');n=waNum(q);if(!n){if(q!==null)alert('Sahi number daalo');return}b.cp=q.trim();save();cloudB(b)}shareWA(b,n)}
  if(k==='e')startEdit(id);
  if(k==='x'&&confirm('Bill '+id+' delete karna hai? Wapas nahi aayega.')){DB.bills=DB.bills.filter(x=>x.id!==id);save();window.cloudDel&&cloudDel(id);rHist()}}
 function rCust(){const m={};DB.bills.forEach(b=>{const k=b.cp||b.cn;if(!k)return;const o=m[k]=m[k]||{n:b.cn,p:b.cp,due:0,c:0};o.due+=tots(b).due;o.c++;o.n=b.cn||o.n});
