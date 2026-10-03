@@ -86,6 +86,7 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
 .r4 input{padding:8px 6px;text-align:center}
 .ipf{font-size:11px;flex:1;text-align:center}.ipf b{color:var(--t)}
 .x{min-height:26px;min-width:28px;padding:0;font-size:12px;border-radius:7px}
+.wa{min-width:44px;padding:0 11px;background:#25d366}.wa svg{width:20px;height:20px;stroke:#fff}
 #scan{position:fixed;inset:0;background:#000;display:none;flex-direction:column;z-index:40}
 #scan video{flex:1;width:100%;object-fit:cover}
 </style></head><body><header class="bar"><div class="ttl"><div class="brand">Azhari Mobile Service Center</div><div class="sub" id="ttl">New Bill</div></div><span class="dot" id="dot"></span>
@@ -122,17 +123,19 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
   <div class="row"><button onclick="bk()">Backup</button><button class="g" onclick="$('rf').click()">Restore</button></div>
   <input id="rf" type="file" accept=".json" style="display:none" onchange="rs(this)"></div>
  <div class="card"><div class="h">Account</div><button class="d" style="width:100%" onclick="doLogout()">Logout</button></div>
+ <div class="card"><div class="h">App MPIN</div><p class="m" id="mpst" style="margin:0 0 10px"></p><div class="row" id="mpb"></div></div>
  <div class="card"><div class="h">Scan sound</div><button class="g" id="sndb" style="width:100%" onclick="togSnd()"></button></div>
  <div class="card"><div class="h">Danger zone</div><p class="m" style="margin:0 0 10px">Reset se saare bills, customers aur products delete ho jate hain aur invoice AZH1 se shuru hota hai. PIN lagta hai.</p><button class="d" style="width:100%" onclick="doReset()">Reset app</button></div>
- <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v10</div></div>
+ <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v11</div></div>
 </div>
 </div>
 
-<div class="act" id="act"><div class="tt"><span>Total</span><b id="tot2">0.00</b></div><button class="g" onclick="sv(false)">Save</button><button onclick="sv(true)">Save &amp; Print</button></div>
+<div class="act" id="act"><div class="tt"><span>Total</span><b id="tot2">0.00</b></div><button class="g" onclick="sv(false)">Save</button><button onclick="sv(true)">Save &amp; Print</button><button class="wa" onclick="sv(false,true)" aria-label="Save and send on WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg></button></div>
 <nav class="bn" id="nav"></nav>
 <div class="toast" id="toast"></div>
 
-<div id="pin" class="ovl"><div class="card"><div class="h">Security PIN</div><p class="m" style="margin:0 0 8px">Reset karne ke liye PIN daalo</p><input id="pv" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN"><div class="row" style="margin-top:10px"><button class="ob" onclick="pinDone(false)">Cancel</button><button onclick="pinDone(true)">OK</button></div></div></div>
+<div id="pin" class="ovl"><div class="card"><div class="h">Security PIN</div><p class="m" id="pmsg" style="margin:0 0 8px">Reset karne ke liye PIN daalo</p><input id="pv" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN"><div class="row" style="margin-top:10px"><button class="ob" onclick="pinDone(false)">Cancel</button><button onclick="pinDone(true)">OK</button></div></div></div>
+<div id="lock" class="ovl" style="background:var(--bg);z-index:70"><div class="card" style="text-align:center"><div class="logo lg" style="margin:0 auto 10px">A</div><div class="brand" style="font-size:17px">Azhari Billing</div><p class="m" style="margin:2px 0 10px">MPIN daalo</p><input id="lv" type="password" inputmode="numeric" autocomplete="off" placeholder="MPIN" style="text-align:center;letter-spacing:.3em" onkeydown="if(event.key==='Enter')unlock()"><div id="lerr2" style="color:var(--r);min-height:18px;font-size:12px"></div><button style="width:100%;margin-top:6px" onclick="unlock()">Unlock</button></div></div>
 <div id="login"><div class="card"><div class="logo lg">A</div><div class="brand" style="font-size:18px">Azhari Billing</div><div class="m" style="margin:2px 0 12px">Login karke aage badho</div>
  <input id="le" type="email" placeholder="Email" autocomplete="username">
  <input id="lp" type="password" placeholder="Password" autocomplete="current-password">
@@ -162,7 +165,7 @@ TT.forEach((t,i)=>{const b=document.createElement('button');b.innerHTML='<svg vi
 let curT=0,armed=false;
 function show(i){curT=i;document.querySelectorAll('.tab').forEach((e,j)=>e.classList.toggle('on',i===j));[...$('nav').children].forEach((b,j)=>b.classList.toggle('on',i===j));
  $('ttl').textContent=TT[i];$('act').style.display=i===0?'flex':'none';
- if(i===1)rHist();if(i===2)rCust();if(i===3)rProd();if(i===4){$('pc').textContent=Object.keys(DB.prod).length;sndLbl()}window.scrollTo(0,0)}
+ if(i===1)rHist();if(i===2)rCust();if(i===3)rProd();if(i===4){$('pc').textContent=Object.keys(DB.prod).length;sndLbl();mpLbl()}window.scrollTo(0,0)}
 function go(i){if(i===curT)return;if(curT===0)history.pushState({t:i},'');else if(i===0){history.back();return}else history.replaceState({t:i},'');show(i)}
 const tab=go;
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),2200)}
@@ -182,9 +185,11 @@ function calc(){items.forEach((x,i)=>{const e=$('t'+i);if(e)e.textContent=f(lt(x
 function fill(){const p=$('cp').value.trim(),n=$('cn').value.trim();const m=DB.bills.slice().reverse().find(b=>(p&&b.cp===p)||(!p&&n&&b.cn===n));if(m){if(!$('cn').value)$('cn').value=m.cn;if(!$('cp').value)$('cp').value=m.cp;if(!$('ca').value)$('ca').value=m.ca||'';$('dAddr').open=!!$('ca').value}}
 function reset(){editId=null;$('eb').style.display='none';$('dAddr').open=false;items=[blank()];['cn','cp','ca','paid'].forEach(k=>$(k).value='');$('inv').value='AZH'+DB.next;$('dt').value=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);$('terms').value=DB.terms;
  const s=new Set();DB.bills.forEach(b=>{if(b.cn)s.add(b.cn);if(b.cp)s.add(b.cp)});$('cl').innerHTML=[...s].map(v=>`<option value="${esc(v)}">`).join('');rItems()}
-async function sv(p){const b=cur();if(!b.items.length){alert('Kam se kam ek item daalo');return}
+async function sv(p,wa){const b=cur();if(!b.items.length){alert('Kam se kam ek item daalo');return}
+ if(wa&&!waNum(b.cp)){alert('WhatsApp ke liye customer ka sahi phone number daalo');return}
  b.items.forEach(x=>{if(x.c)DB.prod[x.c]=mkp(x.n,x.r,x.k===''||x.k==null?null:x.k)});if(editId){const i=DB.bills.findIndex(x=>x.id===editId);if(i>=0)DB.bills[i]=b;else DB.bills.push(b);save();cloudB(b);reset();tab(1);st('Bill update ho gaya '+b.id)}
  else{DB.bills.push(b);DB.next++;save();cloudB(b);reset();st('Saved '+b.id)}
+ if(wa)openWA(b,waNum(b.cp));
  if(p)await prt(b)}
 
 /* receipt text */
@@ -274,7 +279,7 @@ function pDel(c){if(confirm('Delete karna hai?')){delete DB.prod[c];save();rProd
 const PINH='91409655bad2ccce00ee9376f233d4e5d3a8cd290bef2557ad9d68830e667615';
 let pinRes=null;
 const sha=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(x=>x.toString(16).padStart(2,'0')).join('');
-function askPin(){return new Promise(r=>{pinRes=r;$('pv').value='';$('pin').style.display='flex';setTimeout(()=>$('pv').focus(),50)})}
+function askPin(m){return new Promise(r=>{pinRes=r;$('pmsg').textContent=m||'Reset karne ke liye PIN daalo';$('pv').value='';$('pin').style.display='flex';setTimeout(()=>$('pv').focus(),50)})}
 function pinDone(ok){$('pin').style.display='none';if(pinRes){pinRes(ok?$('pv').value.trim():null);pinRes=null}}
 async function doReset(){
  const v=await askPin();if(v===null)return;
@@ -285,6 +290,44 @@ async function doReset(){
  if(!ok){alert('Cloud data nahi hata. Internet check karke dobara try karo.');return}
  DB={bills:[],prod:{},next:1,terms:DB.terms};saveL();reset();show(0);st('App reset ho gaya. Invoice AZH1 se shuru')}
 
+/* whatsapp */
+function waNum(p){const d=String(p||'').replace(/\D/g,'');if(d.length===10)return '91'+d;if(d.length===11&&d[0]==='0')return '91'+d.slice(1);if(d.length>=12&&d.length<=15)return d;return null}
+function waText(b){const t=tots(b),R='\u20b9';let x='*'+SHOP.n+'*\n'+SHOP.a+'\n'+SHOP.p+'\n\nInvoice: '+b.id+'\nDate: '+fd(b.date)+(b.cn?'\nCustomer: '+b.cn:'')+'\n\n';
+ b.items.forEach((i,n)=>{x+=(n+1)+'. '+i.n+(i.s?' (SN: '+i.s+')':'')+'\n   '+f(i.r)+' x '+(+i.q||0)+(+i.d>0?' - '+f(i.d)+' disc':'')+' = '+R+f(lt(i))+'\n'});
+ x+='\nSubtotal: '+R+f(t.sub)+(t.disc>0?'\nDiscount: -'+R+f(t.disc):'')+'\n*Total: '+R+f(t.total)+'*\nPaid: '+R+f(b.paid)+'\n*Due: '+R+f(t.due)+'*\n\nTerms: '+b.terms+'\nThank you!';return x}
+function openWA(b,num){window.open('https://wa.me/'+num+'?text='+encodeURIComponent(waText(b)),'_blank')}
+
+/* app mpin lock */
+const AWAY=30000;
+const mpGet=()=>{try{return JSON.parse(localStorage.getItem('azhmp')||'null')}catch(e){return null}};
+const hasMP=()=>!!mpGet();
+const mpHash=(pin,salt)=>sha(salt+':'+pin);
+async function mpCheck(pin){const m=mpGet();return !!m&&await mpHash(pin,m.s)===m.h}
+async function mpStore(pin){const s=Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem('azhmp',JSON.stringify({s,h:await mpHash(pin,s)}))}catch(e){alert('MPIN save nahi hua')}}
+let tries=0,lockedUntil=0,hiddenAt=0;
+function showLock(){if(!hasMP())return;$('lock').style.display='flex';$('lv').value='';$('lerr2').textContent='';setTimeout(()=>$('lv').focus(),80)}
+async function unlock(){
+ if(Date.now()<lockedUntil){$('lerr2').textContent='Thodi der baad try karo';return}
+ if(await mpCheck($('lv').value.trim())){tries=0;$('lock').style.display='none';$('lv').value='';$('lerr2').textContent=''}
+ else{tries++;$('lv').value='';if(tries>=5){tries=0;lockedUntil=Date.now()+30000;$('lerr2').textContent='5 baar galat. 30 second ruko'}else $('lerr2').textContent='Galat MPIN'}}
+function mpLbl(){const on=hasMP();$('mpst').textContent=on?'MPIN ON: Chrome se hatke 30 second baad wapas aane par MPIN puchhega.':'MPIN OFF: App bina lock ke khulta hai.';
+ $('mpb').innerHTML=on?'<button class="g" onclick="mpChange()">Change MPIN</button><button class="d" onclick="mpRemove()">Remove MPIN</button>':'<button onclick="mpSet()">Set MPIN</button>'}
+async function mpNew(){
+ const a=await askPin('Naya MPIN daalo (4 se 10 digit)');if(a===null)return false;
+ if(!/^\d{4,10}$/.test(a)){alert('MPIN sirf 4 se 10 digit ka number ho');return false}
+ const b=await askPin('MPIN dobara daalo');if(b===null)return false;
+ if(a!==b){alert('Dono MPIN match nahi hue');return false}
+ await mpStore(a);return true}
+async function mpSet(){if(await mpNew()){mpLbl();toast('MPIN set ho gaya')}}
+async function mpChange(){const o=await askPin('Purana MPIN daalo');if(o===null)return;if(!await mpCheck(o)){alert('Galat MPIN');return}if(await mpNew()){mpLbl();toast('MPIN badal gaya')}}
+async function mpRemove(){const o=await askPin('MPIN daalo (remove karne ke liye)');if(o===null)return;if(!await mpCheck(o)){alert('Galat MPIN');return}try{localStorage.removeItem('azhmp')}catch(e){}mpLbl();toast('MPIN hata diya')}
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden){hiddenAt=Date.now();return}
+ if(!hiddenAt)return;const away=Date.now()-hiddenAt;hiddenAt=0;if(away<AWAY)return;
+ const draft=items.some(x=>x.n||x.r)||$('cn').value||$('cp').value;
+ if(!draft&&!editId){location.reload();return}
+ showLock()});
+
 /* history, customers, backup */
 function rHist(){const q=$('hq').value.toLowerCase(),d1=$('hf').value,d2=$('ht').value;
  const L=DB.bills.slice().reverse().filter(b=>{const d=(b.date||'').slice(0,10);return (b.id+(b.cn||'')+(b.cp||'')).toLowerCase().includes(q)&&(!d1||d>=d1)&&(!d2||d<=d2)});
@@ -292,7 +335,7 @@ function rHist(){const q=$('hq').value.toLowerCase(),d1=$('hf').value,d2=$('ht')
  $('hsum').innerHTML=`<div class="kpi"><small>Total sale</small><b>₹${f(sale)}</b><small>${L.length} bill</small></div><div class="row kp2"><div><small>Received</small><b class="gr">₹${f(paid)}</b></div><div><small>Due</small><b class="rd">₹${f(sale-paid)}</b></div><div><small>Profit</small><b class="gr">₹${f(pf)}</b></div></div>${nc?`<small style="margin-top:10px">${nc} bill me cost nahi (profit me poora nahi ginta)</small>`:''}`;
  $('hist').innerHTML=L.map(b=>{const t=tots(b);return `<div class="card bill"><div class="bh"><b>${b.id}</b><span class="badge ${t.due>0?'rd':'gn'}">${t.due>0?'Due':'Paid'}</span></div>
  <div class="kv"><div><span>Date</span> ${fd(b.date)}</div><div><span>Customer</span> ${esc(b.cn||'N/A')}</div><div><span>Phone</span> ${esc(b.cp||'\u2014')}</div><div><span>Items</span> ${b.items.length}</div><div><span>Total</span> <b>₹${f(t.total)}</b></div><div><span>Due</span> <b class="${t.due>0?'neg':'pos'}">₹${f(t.due)}</b></div>${(()=>{const q=prof(b);return `<div><span>Profit</span> ${q.known?`<b class="${q.p>=0?'pos':'neg'}">₹${f(q.p)}${q.miss?' *':''}</b>`:'<span style="font-size:13px">cost nahi</span>'}</div>`})()}</div>
- <div class="acts"><button class="ob gn" onclick="act('${b.id}','p')">Print</button><button class="ob gn" onclick="act('${b.id}','i')">Image</button><button class="ob gn" onclick="act('${b.id}','f')">PDF</button><button class="ob bl" onclick="act('${b.id}','e')">Edit</button><button class="ob rd" onclick="act('${b.id}','x')">Delete</button>${t.due>0?`<button class="ob gn" onclick="act('${b.id}','r')">Due received</button>`:''}</div></div>`}).join('')||'<p class="m">Koi bill nahi</p>'}
+ <div class="acts"><button class="ob gn" onclick="act('${b.id}','p')">Print</button><button class="ob gn" onclick="act('${b.id}','i')">Image</button><button class="ob gn" onclick="act('${b.id}','f')">PDF</button><button class="ob gn" onclick="act('${b.id}','w')">WhatsApp</button><button class="ob bl" onclick="act('${b.id}','e')">Edit</button><button class="ob rd" onclick="act('${b.id}','x')">Delete</button>${t.due>0?`<button class="ob gn" onclick="act('${b.id}','r')">Due received</button>`:''}</div></div>`}).join('')||'<p class="m">Koi bill nahi</p>'}
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 function hToday(){$('hf').value=$('ht').value=today();rHist()}
 function hClear(){$('hq').value=$('hf').value=$('ht').value='';rHist()}
@@ -301,6 +344,7 @@ function startEdit(id){const b=DB.bills.find(x=>x.id===id);if(!b)return;editId=i
  $('eb').style.display='block';$('ebn').textContent=id;tab(0);rItems();window.scrollTo(0,0)}
 function act(id,k){const b=DB.bills.find(x=>x.id===id);if(k==='p')prt(b);if(k==='i')img(b);if(k==='f')pdf(b);
  if(k==='r'){const a=prompt('Kitna mila? (Rs)');if(+a>0){b.paid=(+b.paid||0)+ +a;save();cloudB(b);rHist()}}
+ if(k==='w'){let n=waNum(b.cp);if(!n){const q=prompt('Customer ka WhatsApp number:');n=waNum(q);if(!n){if(q!==null)alert('Sahi number daalo');return}b.cp=q.trim();save();cloudB(b)}openWA(b,n)}
  if(k==='e')startEdit(id);
  if(k==='x'&&confirm('Bill '+id+' delete karna hai? Wapas nahi aayega.')){DB.bills=DB.bills.filter(x=>x.id!==id);save();window.cloudDel&&cloudDel(id);rHist()}}
 function rCust(){const m={};DB.bills.forEach(b=>{const k=b.cp||b.cn;if(!k)return;const o=m[k]=m[k]||{n:b.cn,p:b.cp,due:0,c:0};o.due+=tots(b).due;o.c++;o.n=b.cn||o.n});
@@ -311,7 +355,7 @@ function cEdit(k){const bs=DB.bills.filter(b=>(b.cp||b.cn)===k);if(!bs.length)re
 function bk(){const bl=new Blob([JSON.stringify(DB)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='azhari-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
 function rs(i){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.bills))throw 0;DB=Object.assign(DB,d);save();window.cloudAll&&cloudAll();reset();alert('Restore ho gaya')}catch(e){alert('Galat file')}};if(i.files[0])r.readAsText(i.files[0])}
 
-reset();history.replaceState({base:1},'');history.pushState({t:0},'');show(0);
+showLock();reset();history.replaceState({base:1},'');history.pushState({t:0},'');show(0);
 </script><script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
