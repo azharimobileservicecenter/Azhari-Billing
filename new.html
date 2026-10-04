@@ -108,6 +108,11 @@ body.view .bar,body.view .stat,body.view .w,body.view .act,body.view .bn,body.vi
  <div class="card c2"><div class="ih"><div class="h" style="margin:0">Items</div><div class="row" style="flex:none;width:58%"><button class="g sm2" onclick="items.push(blank());rItems()">+ Item</button><button class="sm2" onclick="SM='bill';scan()">Scan</button></div></div><div id="items"></div></div>
  <div class="card c2"><div class="row" style="align-items:flex-end"><div><label class="l" style="margin-top:0">Amount paid</label><input id="paid" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div><div class="duebox"><span class="l" style="margin:0">Due</span><b id="due"></b></div></div>
   <div class="row pmr" style="margin-top:8px"><button class="ob" id="pm_Cash" onclick="setPM('Cash')">Cash</button><button class="ob" id="pm_UPI" onclick="setPM('UPI')">UPI</button><button class="ob" id="pm_Card" onclick="setPM('Card')">Card</button></div>
+  <div id="qrbox" style="display:none;text-align:center;margin-top:10px;padding:12px;border:1px dashed var(--b);border-radius:12px">
+   <div id="qrmsg" class="m" style="display:none">UPI ID set nahi hai. Settings me apna UPI ID daalo.</div>
+   <div id="qrmain"><canvas id="qrc" width="245" height="245" style="width:245px;max-width:100%;image-rendering:pixelated;background:#fff"></canvas>
+    <div style="font-size:20px;font-weight:700;margin-top:4px">&#8377;<span id="qram"></span></div><div class="m" style="font-size:11.5px">Customer UPI se scan karke pay kare</div>
+    <div class="row" style="margin-top:8px"><button class="ob" onclick="qrCancel()">Hide QR</button><button onclick="qrPaid()">Payment mil gaya</button></div></div></div>
   <div class="mini">Sub <span id="sub"></span> &middot; Disc <span id="dis"></span> &middot; Total <b id="tot"></b> &middot; Profit <b id="pft"></b></div>
   <details class="dt"><summary>Terms</summary><textarea id="terms" rows="2" onchange="DB.terms=this.value;save()"></textarea></details></div>
 </div>
@@ -144,10 +149,11 @@ body.view .bar,body.view .stat,body.view .w,body.view .act,body.view .bn,body.vi
   <div class="row"><button onclick="bk()">Backup</button><button class="g" onclick="$('rf').click()">Restore</button></div>
   <input id="rf" type="file" accept=".json" style="display:none" onchange="rs(this)"></div>
  <div class="card"><div class="h">Account</div><button class="d" style="width:100%" onclick="doLogout()">Logout</button></div>
+ <div class="card"><div class="h">UPI ID (QR ke liye)</div><input id="upiid" placeholder="e.g. 9933831321@ybl" autocapitalize="off" autocomplete="off"><button style="width:100%;margin-top:8px" onclick="saveUPI()">Save UPI ID</button><div class="m" id="upist" style="margin-top:6px;font-size:12px"></div></div>
  <div class="card"><div class="h">App MPIN</div><p class="m" id="mpst" style="margin:0 0 10px"></p><div class="row" id="mpb"></div></div>
  <div class="card"><div class="h">Scan sound</div><button class="g" id="sndb" style="width:100%" onclick="togSnd()"></button></div>
  <div class="card"><div class="h">Danger zone</div><p class="m" style="margin:0 0 10px">Reset se saare bills, customers, products, repair jobs aur stock delete ho jate hain aur invoice AZH1 se shuru hota hai. PIN lagta hai.</p><button class="d" style="width:100%" onclick="doReset()">Reset app</button></div>
- <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v15 (new)</div></div>
+ <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v16 (new)</div></div>
 </div>
 </div>
 
@@ -187,7 +193,7 @@ TT.forEach((t,i)=>{const b=document.createElement('button');b.innerHTML='<svg vi
 let curT=0,armed=false;
 function show(i){curT=i;document.querySelectorAll('.tab').forEach((e,j)=>e.classList.toggle('on',i===j));[...$('nav').children].forEach((b,j)=>b.classList.toggle('on',i===j));
  $('ttl').textContent=TT[i];$('act').style.display=i===0?'flex':'none';
- if(i===1)rHist();if(i===2)rJobs();if(i===3)rCust();if(i===4)rProd();if(i===5){$('pc').textContent=Object.keys(DB.prod).length;sndLbl();mpLbl()}window.scrollTo(0,0)}
+ if(i===1)rHist();if(i===2)rJobs();if(i===3)rCust();if(i===4)rProd();if(i===5){$('pc').textContent=Object.keys(DB.prod).length;sndLbl();mpLbl();$('upiid').value=DB.upi||''}window.scrollTo(0,0)}
 function go(i){if(i===curT)return;if(curT===0)history.pushState({t:i},'');else if(i===0){history.back();return}else history.replaceState({t:i},'');show(i)}
 const tab=go;
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),2200)}
@@ -203,7 +209,7 @@ function rItems(){
 const cur=()=>({id:editId||'AZH'+DB.next,date:$('dt').value,cn:$('cn').value.trim(),cp:$('cp').value.trim(),ca:$('ca').value.trim(),items:items.filter(x=>x.n||+x.r).map(x=>({...x,n:x.n||'Item'})),paid:+$('paid').value||0,terms:$('terms').value.trim(),pm:PM});
 function tots(b){let sub=0,disc=0;b.items.forEach(x=>{sub+=(+x.r||0)*(+x.q||0);disc+=+x.d||0});const total=sub-disc;return{sub,disc,total,due:total-(+b.paid||0)}}
 function prof(b){let p=0,known=0,miss=0;b.items.forEach(x=>{if(x.k===''||x.k==null)miss++;else{known++;p+=lt(x)-(+x.k||0)*(+x.q||0)}});return{p,known,miss}}
-function calc(){items.forEach((x,i)=>{const e=$('t'+i);if(e)e.textContent=f(lt(x));const g=$('pf'+i);if(g)g.textContent=(x.k===''||x.k==null)?'-':'₹'+f(lt(x)-(+x.k||0)*(+x.q||0))});const t=tots(cur());$('sub').textContent=f(t.sub);$('dis').textContent=f(t.disc);$('tot').textContent=$('tot2').textContent=f(t.total);$('due').textContent=f(t.due);const pr=prof(cur());$('pft').textContent=pr.known?'₹'+f(pr.p)+(pr.miss?' *':''):'-'}
+function calc(){renderQR();items.forEach((x,i)=>{const e=$('t'+i);if(e)e.textContent=f(lt(x));const g=$('pf'+i);if(g)g.textContent=(x.k===''||x.k==null)?'-':'₹'+f(lt(x)-(+x.k||0)*(+x.q||0))});const t=tots(cur());$('sub').textContent=f(t.sub);$('dis').textContent=f(t.disc);$('tot').textContent=$('tot2').textContent=f(t.total);$('due').textContent=f(t.due);const pr=prof(cur());$('pft').textContent=pr.known?'₹'+f(pr.p)+(pr.miss?' *':''):'-'}
 function fill(){const p=$('cp').value.trim(),n=$('cn').value.trim();const m=DB.bills.slice().reverse().find(b=>(p&&b.cp===p)||(!p&&n&&b.cn===n));if(m){if(!$('cn').value)$('cn').value=m.cn;if(!$('cp').value)$('cp').value=m.cp;if(!$('ca').value)$('ca').value=m.ca||'';$('dAddr').open=!!$('ca').value}}
 function reset(){editId=null;jobLink=null;setPM('Cash');$('eb').style.display='none';$('dAddr').open=false;items=[blank()];['cn','cp','ca','paid'].forEach(k=>$(k).value='');$('inv').value='AZH'+DB.next;$('dt').value=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);$('terms').value=DB.terms;
  const s=new Set();DB.bills.forEach(b=>{if(b.cn)s.add(b.cn);if(b.cp)s.add(b.cp)});$('cl').innerHTML=[...s].map(v=>`<option value="${esc(v)}">`).join('');rItems()}
@@ -319,7 +325,7 @@ async function doReset(){
  bk();
  const ok=window.cloudReset?await Promise.race([cloudReset(),new Promise(r=>setTimeout(()=>r(false),10000))]):true;
  if(!ok){alert('Cloud data nahi hata. Internet check karke dobara try karo.');return}
- DB={bills:[],prod:{},next:1,terms:DB.terms};DBX={stock:{},jobs:[],nj:1};xsave();saveL();reset();show(0);st('App reset ho gaya. Invoice AZH1 se shuru')}
+ DB={bills:[],prod:{},next:1,terms:DB.terms,upi:DB.upi||''};DBX={stock:{},jobs:[],nj:1};xsave();saveL();reset();show(0);st('App reset ho gaya. Invoice AZH1 se shuru')}
 
 /* bill link (customer view) */
 const b64e=o=>{const by=new TextEncoder().encode(JSON.stringify(o));let t='';by.forEach(x=>t+=String.fromCharCode(x));return btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
@@ -376,7 +382,7 @@ let DBX={stock:{},jobs:[],nj:1};
 try{const x=localStorage.getItem('azhx');if(x)DBX=Object.assign(DBX,JSON.parse(x))}catch(e){}
 const xsave=()=>{try{localStorage.setItem('azhx',JSON.stringify(DBX))}catch(e){}};
 const nowL=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
-function setPM(m){PM=m;['Cash','UPI','Card'].forEach(k=>{const e=$('pm_'+k);if(e)e.classList.toggle('sel',k===m)})}
+function setPM(m){PM=m;qrHide=false;qrLast='';['Cash','UPI','Card'].forEach(k=>{const e=$('pm_'+k);if(e)e.classList.toggle('sel',k===m)});renderQR()}
 function stk(items,sign){let ch=false;(items||[]).forEach(x=>{if(x.c&&DBX.stock[x.c]!==undefined){DBX.stock[x.c]+=sign*(+x.q||0);ch=true}});if(ch){xsave();window.cloudStock&&cloudStock()}}
 function stkTxt(c){const n=DBX.stock[c];return n===undefined?'-':(n<=3?'<b class="neg">'+n+' (kam)</b>':'<b>'+n+'</b>')}
 function pStock(c){const q=prompt('Stock me kitna jodna hai? (kam karne ke liye minus daalo)');if(q===null||q.trim()===''||isNaN(+q))return;DBX.stock[c]=(DBX.stock[c]||0)+ +q;xsave();window.cloudStock&&cloudStock();rProd()}
@@ -425,6 +431,88 @@ function rJobs(){const q=($('jq').value||'').toLowerCase();
  <div class="kv"><div><span>Device</span> ${esc(j.dev)}</div><div><span>Customer</span> ${esc(j.cn||'N/A')}</div><div><span>Phone</span> ${esc(j.cp||'-')}</div><div><span>Date</span> ${fd(j.date)}</div><div style="grid-column:1/3"><span>Problem</span> ${esc(j.iss||'-')}</div><div><span>Estimate</span> \u20b9${f(j.est)}</div><div><span>Advance</span> \u20b9${f(j.adv)}</div></div>
  <div class="acts">${j.st<3?`<button class="ob gn" onclick="jNext('${j.id}')">Mark: ${JST[j.st+1]}</button>`:''}<button class="ob gn" onclick="jWA('${j.id}')">WhatsApp</button><button class="ob gn" onclick="jPrint('${j.id}')">Slip</button><button class="ob bl" onclick="jBill('${j.id}')">Make bill</button><button class="ob bl" onclick="jEditStart('${j.id}')">Edit</button><button class="ob rd" onclick="jDel('${j.id}')">Delete</button></div></div>`).join('')||'<p class="m">Koi job nahi</p>'}
 
+/* QR code generator (byte mode, error correction M, versions 1-10) */
+function qrMatrix(text){
+ const bytes=[...new TextEncoder().encode(text)];
+ const T=[null,[10,[[1,16]]],[16,[[1,28]]],[26,[[1,44]]],[18,[[2,32]]],[24,[[2,43]]],[16,[[4,27]]],[18,[[4,31]]],[22,[[2,38],[2,39]]],[22,[[3,36],[2,37]]],[26,[[4,43],[1,44]]]];
+ const AP=[null,[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50]];
+ let ver=0,dataCw=0;
+ for(let v=1;v<=10;v++){const dc=T[v][1].reduce((a,[c,d])=>a+c*d,0);if(4+(v<10?8:16)+8*bytes.length<=dc*8){ver=v;dataCw=dc;break}}
+ if(!ver)return null;
+ const bits=[],put=(val,len)=>{for(let i=len-1;i>=0;i--)bits.push((val>>i)&1)};
+ put(4,4);put(bytes.length,ver<10?8:16);bytes.forEach(b=>put(b,8));
+ put(0,Math.min(4,dataCw*8-bits.length));while(bits.length%8)bits.push(0);
+ const cw=[];for(let i=0;i<bits.length;i+=8){let x=0;for(let j=0;j<8;j++)x=x*2+bits[i+j];cw.push(x)}
+ for(let p=0;cw.length<dataCw;p++)cw.push(p%2?0x11:0xEC);
+ const EXP=new Array(512),LOG=new Array(256);let x=1;
+ for(let i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x&256)x^=0x11d}
+ for(let i=255;i<512;i++)EXP[i]=EXP[i-255];
+ const mul=(a,b)=>a&&b?EXP[LOG[a]+LOG[b]]:0;
+ const gen=k=>{let g=[1];for(let i=0;i<k;i++){const ng=new Array(g.length+1).fill(0);for(let j=0;j<g.length;j++){ng[j]^=g[j];ng[j+1]^=mul(g[j],EXP[i])}g=ng}return g};
+ const rs=(data,k)=>{const g=gen(k),res=new Array(k).fill(0);for(const d of data){const f=d^res[0];res.shift();res.push(0);if(f)for(let i=0;i<k;i++)res[i]^=mul(g[i+1],f)}return res};
+ const [ec,groups]=T[ver],blocks=[];let pos=0;
+ groups.forEach(([cnt,dc])=>{for(let i=0;i<cnt;i++){const d=cw.slice(pos,pos+dc);pos+=dc;blocks.push({d,e:rs(d,ec)})}});
+ const fin=[],maxd=Math.max(...blocks.map(b=>b.d.length));
+ for(let i=0;i<maxd;i++)blocks.forEach(b=>{if(i<b.d.length)fin.push(b.d[i])});
+ for(let i=0;i<ec;i++)blocks.forEach(b=>fin.push(b.e[i]));
+ const n=17+4*ver,m=Array.from({length:n},()=>new Array(n).fill(false)),f=Array.from({length:n},()=>new Array(n).fill(false));
+ const set=(r,c,v)=>{m[r][c]=v;f[r][c]=true};
+ const finder=(r0,c0)=>{for(let r=-1;r<=7;r++)for(let c=-1;c<=7;c++){const rr=r0+r,cc=c0+c;if(rr<0||cc<0||rr>=n||cc>=n)continue;set(rr,cc,(r>=0&&r<=6&&(c===0||c===6))||(c>=0&&c<=6&&(r===0||r===6))||(r>=2&&r<=4&&c>=2&&c<=4))}};
+ finder(0,0);finder(0,n-7);finder(n-7,0);
+ for(let i=8;i<n-8;i++){set(6,i,i%2===0);set(i,6,i%2===0)}
+ const ap=AP[ver],last=ap[ap.length-1];
+ for(const r of ap)for(const c of ap){if((r===6&&c===6)||(r===6&&c===last)||(c===6&&r===last))continue;for(let a=-2;a<=2;a++)for(let b=-2;b<=2;b++)set(r+a,c+b,Math.max(Math.abs(a),Math.abs(b))!==1)}
+ for(let i=0;i<9;i++){if(!f[8][i])set(8,i,false);if(!f[i][8])set(i,8,false)}
+ for(let i=0;i<8;i++){set(8,n-1-i,false);set(n-1-i,8,false)}
+ set(n-8,8,true);
+ if(ver>=7){let d=ver<<12;const dig=v=>{let c=0;while(v){c++;v>>=1}return c};while(dig(d)-dig(0x1f25)>=0)d^=0x1f25<<(dig(d)-dig(0x1f25));const bv=(ver<<12)|d;
+  for(let i=0;i<18;i++){const b=((bv>>i)&1)===1;set(Math.floor(i/3),i%3+n-11,b);set(i%3+n-11,Math.floor(i/3),b)}}
+ const db=[];fin.forEach(b=>{for(let i=7;i>=0;i--)db.push((b>>i)&1)});
+ let bi=0,up=true;
+ for(let c=n-1;c>0;c-=2){if(c===6)c--;for(let k=0;k<n;k++){const r=up?n-1-k:k;for(let d=0;d<2;d++){const cc=c-d;if(!f[r][cc]){m[r][cc]=bi<db.length?db[bi]===1:false;bi++}}}up=!up}
+ const MF=[(r,c)=>(r+c)%2===0,(r,c)=>r%2===0,(r,c)=>c%3===0,(r,c)=>(r+c)%3===0,(r,c)=>(Math.floor(r/2)+Math.floor(c/3))%2===0,(r,c)=>(r*c)%2+(r*c)%3===0,(r,c)=>((r*c)%2+(r*c)%3)%2===0,(r,c)=>((r+c)%2+(r*c)%3)%2===0];
+ const pen=g=>{let s=0;
+  for(let t=0;t<2;t++){for(let i=0;i<n;i++){let run=1;for(let j=1;j<n;j++){const a=t?g[j][i]:g[i][j],b=t?g[j-1][i]:g[i][j-1];if(a===b){run++;if(j===n-1&&run>=5)s+=3+run-5}else{if(run>=5)s+=3+run-5;run=1}}}}
+  for(let r=0;r<n-1;r++)for(let c=0;c<n-1;c++){const v=g[r][c];if(v===g[r][c+1]&&v===g[r+1][c]&&v===g[r+1][c+1])s+=3}
+  const P1=[1,0,1,1,1,0,1,0,0,0,0],P2=[0,0,0,0,1,0,1,1,1,0,1];
+  for(let t=0;t<2;t++)for(let i=0;i<n;i++)for(let j=0;j<=n-11;j++){let a=true,b=true;for(let k=0;k<11;k++){const v=(t?g[j+k][i]:g[i][j+k])?1:0;if(v!==P1[k])a=false;if(v!==P2[k])b=false}if(a)s+=40;if(b)s+=40}
+  let dark=0;for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(g[r][c])dark++;
+  return s+10*Math.floor(Math.abs(dark*100/(n*n)-50)/5)};
+ let best=null,bp=1e9;
+ for(let mk=0;mk<8;mk++){
+  const g=m.map(r=>r.slice());
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(!f[r][c]&&MF[mk](r,c))g[r][c]=!g[r][c];
+  let d=mk,r10=d<<10;const dg=v=>{let c=0;while(v){c++;v>>=1}return c};
+  while(dg(r10)-dg(0x537)>=0)r10^=0x537<<(dg(r10)-dg(0x537));
+  const bits2=((d<<10)|r10)^0x5412;
+  for(let i=0;i<15;i++){const b=((bits2>>i)&1)===1;
+   if(i<6)g[i][8]=b;else if(i<8)g[i+1][8]=b;else g[n-15+i][8]=b;
+   if(i<8)g[8][n-i-1]=b;else if(i<9)g[8][15-i-1+1]=b;else g[8][15-i-1]=b}
+  g[n-8][8]=true;
+  const p=pen(g);if(p<bp){bp=p;best=g}}
+ return best}
+
+/* UPI QR */
+let qrHide=false,qrLast='';
+const upiOk=v=>/^[\w.\-]{2,256}@[A-Za-z]{2,64}$/.test((v||'').trim());
+function upiLink(amt,note){return 'upi://pay?pa='+DB.upi.trim()+'&pn='+encodeURIComponent(SHOP.n)+'&am='+amt.toFixed(2)+'&cu=INR&tn='+encodeURIComponent(note)}
+function drawQR(cv,text){const mx=qrMatrix(text);if(!mx)return false;const n=mx.length,q=4,sz=cv.width,sc=Math.floor(sz/(n+2*q)),off=Math.floor((sz-sc*n)/2),g=cv.getContext('2d');
+ g.fillStyle='#fff';g.fillRect(0,0,sz,sz);g.fillStyle='#000';for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(mx[r][c])g.fillRect(off+c*sc,off+r*sc,sc,sc);return true}
+function renderQR(){const box=$('qrbox'),due=tots(cur()).due;
+ if(PM!=='UPI'||qrHide||due<=0.005){box.style.display='none';qrLast='';return}
+ box.style.display='block';
+ if(!upiOk(DB.upi)){$('qrmsg').textContent='UPI ID set nahi hai. Settings me apna UPI ID daalo.';$('qrmsg').style.display='block';$('qrmain').style.display='none';return}
+ const a=Math.round(due*100)/100,link=upiLink(a,$('inv').value||'Bill');
+ $('qram').textContent=f(a);
+ if(link!==qrLast){qrLast=link;if(!drawQR($('qrc'),link)){$('qrmsg').textContent='QR nahi ban paya';$('qrmsg').style.display='block';$('qrmain').style.display='none';return}}
+ $('qrmsg').style.display='none';$('qrmain').style.display='block'}
+function qrPaid(){const a=Math.round(tots(cur()).due*100)/100;if(a<=0)return;
+ if(!confirm('\u20b9'+f(a)+' aapke UPI app me aa gaye? Pehle apne UPI app ya SMS me dekh lo.'))return;
+ $('paid').value=Math.round(((+$('paid').value||0)+a)*100)/100;qrHide=true;calc();toast('Payment mil gaya, paid me jod diya')}
+function qrCancel(){qrHide=true;renderQR()}
+function saveUPI(){const v=($('upiid').value||'').trim();if(v&&!upiOk(v)){alert('UPI ID sahi nahi lag raha (jaise 9933831321@ybl)');return}
+ DB.upi=v;save();qrHide=false;qrLast='';$('upist').textContent=v?'Save ho gaya':'UPI ID hata diya';renderQR()}
+
 /* history, customers, backup */
 function rHist(){const q=$('hq').value.toLowerCase(),d1=$('hf').value,d2=$('ht').value;
  const L=DB.bills.slice().reverse().filter(b=>{const d=(b.date||'').slice(0,10);return (b.id+(b.cn||'')+(b.cp||'')).toLowerCase().includes(q)&&(!d1||d>=d1)&&(!d2||d<=d2)});
@@ -462,9 +550,9 @@ const app=initializeApp({apiKey:"AIzaSyAnk-UlgMHiuELten6j-WOpnKytV1aD6FQ",authDo
 const auth=getAuth(app),db=initializeFirestore(app,{localCache:persistentLocalCache()});
 let on=false;const bad=e=>console.warn(e);
 window.cloudBill=b=>{if(on)setDoc(doc(db,'bills',b.id),b).catch(bad)};
-window.cloudMeta=()=>{if(on)setDoc(doc(db,'meta','main'),{prod:DB.prod,next:DB.next,terms:DB.terms}).catch(bad)};
+window.cloudMeta=()=>{if(on)setDoc(doc(db,'meta','main'),{prod:DB.prod,next:DB.next,terms:DB.terms,upi:DB.upi||''}).catch(bad)};
 window.cloudDel=id=>{if(on)deleteDoc(doc(db,'bills',id)).catch(bad)};
-window.cloudReset=async()=>{if(!on)return false;try{const s=await getDocs(collection(db,'bills'));await Promise.all(s.docs.map(d=>deleteDoc(d.ref)));const js=await getDocs(collection(db,'jobs'));await Promise.all(js.docs.map(d=>deleteDoc(d.ref)));await setDoc(doc(db,'stock','main'),{});await setDoc(doc(db,'meta','main'),{prod:{},next:1,terms:DB.terms});return true}catch(e){return false}};
+window.cloudReset=async()=>{if(!on)return false;try{const s=await getDocs(collection(db,'bills'));await Promise.all(s.docs.map(d=>deleteDoc(d.ref)));const js=await getDocs(collection(db,'jobs'));await Promise.all(js.docs.map(d=>deleteDoc(d.ref)));await setDoc(doc(db,'stock','main'),{});await setDoc(doc(db,'meta','main'),{prod:{},next:1,terms:DB.terms,upi:DB.upi||''});return true}catch(e){return false}};
 window.cloudStock=()=>{if(on)setDoc(doc(db,'stock','main'),DBX.stock).catch(bad)};
 window.cloudJob=j=>{if(on)setDoc(doc(db,'jobs',j.id),j).catch(bad)};
 window.cloudJobDel=id=>{if(on)deleteDoc(doc(db,'jobs',id)).catch(bad)};
@@ -480,7 +568,7 @@ async function load(){
  const m=await getDoc(doc(db,'meta','main')),s=await getDocs(collection(db,'bills')),cb=s.docs.map(d=>d.data());
  if(!cb.length&&DB.bills.length){cloudAll();return}
  const mm=m.exists()?m.data():{},n=x=>+String(x.id).replace(/\D/g,'');
- DB.bills=cb.sort((a,b)=>n(a)-n(b));if(mm.prod)DB.prod=mm.prod;if(mm.terms)DB.terms=mm.terms;
+ DB.bills=cb.sort((a,b)=>n(a)-n(b));if(mm.prod)DB.prod=mm.prod;if(mm.terms)DB.terms=mm.terms;if(mm.upi)DB.upi=mm.upi;
  DB.next=Math.max(mm.next||1,DB.bills.length?n(DB.bills[DB.bills.length-1])+1:1);
  saveL();reset();st('Cloud se data aa gaya')}
 if(!window.__VIEW)onAuthStateChanged(auth,async u=>{
