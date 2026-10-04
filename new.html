@@ -94,10 +94,12 @@ body.view .bar,body.view .stat,body.view .w,body.view .act,body.view .bn,body.vi
 .sel{background:var(--p)!important;color:#fff!important;border-color:var(--p)!important}
 .badge.am{background:#fef3c7;color:#b45309}.badge.gy{background:#e2e8f0;color:#475569}
 #jchips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+body:not(.own) .pv{display:none!important}
+#eyeb.on{background:#fde8ec}#eyeb.on svg{stroke:#c62839}
 #scan{position:fixed;inset:0;background:#000;display:none;flex-direction:column;z-index:40}
 #scan video{flex:1;width:100%;object-fit:cover}
 </style></head><body><header class="bar"><div class="ttl"><div class="brand">Azhari Mobile Service Center</div><div class="sub" id="ttl">New Bill</div></div><span class="dot" id="dot"></span>
- <button class="ico" onclick="conn()" aria-label="Connect printer"><svg viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button></header>
+ <button class="ico" onclick="conn()" aria-label="Connect printer"><svg viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button><button class="ico" id="eyeb" onclick="togOwn()" aria-label="Owner view"><svg id="eyes" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.7 9.7 0 0 1 12 6c5 0 8.5 4 9.5 6a12 12 0 0 1-2.6 3.3M6.6 6.7A12 12 0 0 0 2.5 12c1 2 4.5 6 9.5 6a9.6 9.6 0 0 0 3.2-.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button></header>
 <div class="stat" id="st">Printer connect nahi hai</div>
 <div class="w">
 <div class="tab on" id="tab0">
@@ -113,7 +115,7 @@ body.view .bar,body.view .stat,body.view .w,body.view .act,body.view .bn,body.vi
    <div id="qrmain"><canvas id="qrc" width="245" height="245" style="width:245px;max-width:100%;image-rendering:pixelated;background:#fff"></canvas>
     <div style="font-size:20px;font-weight:700;margin-top:4px">&#8377;<span id="qram"></span></div><div class="m" style="font-size:11.5px">Customer UPI se scan karke pay kare</div>
     <div class="row" style="margin-top:8px"><button class="ob" onclick="qrCancel()">Hide QR</button><button onclick="qrPaid()">Payment mil gaya</button></div></div></div>
-  <div class="mini">Sub <span id="sub"></span> &middot; Disc <span id="dis"></span> &middot; Total <b id="tot"></b> &middot; Profit <b id="pft"></b></div>
+  <div class="mini">Sub <span id="sub"></span> &middot; Disc <span id="dis"></span> &middot; Total <b id="tot"></b><span class="pv"> &middot; Profit <b id="pft"></b></span></div>
   <details class="dt"><summary>Terms</summary><textarea id="terms" rows="2" onchange="DB.terms=this.value;save()"></textarea></details></div>
 </div>
 
@@ -153,7 +155,7 @@ body.view .bar,body.view .stat,body.view .w,body.view .act,body.view .bn,body.vi
  <div class="card"><div class="h">App MPIN</div><p class="m" id="mpst" style="margin:0 0 10px"></p><div class="row" id="mpb"></div></div>
  <div class="card"><div class="h">Scan sound</div><button class="g" id="sndb" style="width:100%" onclick="togSnd()"></button></div>
  <div class="card"><div class="h">Danger zone</div><p class="m" style="margin:0 0 10px">Reset se saare bills, customers, products, repair jobs aur stock delete ho jate hain aur invoice AZH1 se shuru hota hai. PIN lagta hai.</p><button class="d" style="width:100%" onclick="doReset()">Reset app</button></div>
- <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v16 (new)</div></div>
+ <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v17 (new)</div></div>
 </div>
 </div>
 
@@ -203,9 +205,9 @@ addEventListener('popstate',e=>{const q=e.state||{};if(scanning)stopScan();
 
 /* form */
 function rItems(){
- $('items').innerHTML=items.map((x,i)=>`<div class="it"><div class="ith"><b>Item ${i+1}</b><span class="m ipf">Total <b id="t${i}"></b> &middot; Profit <b id="pf${i}"></b></span><button class="d x" onclick="items.splice(${i},1);if(!items.length)items.push(blank());rItems()">&#10005;</button></div>
+ $('items').innerHTML=items.map((x,i)=>`<div class="it"><div class="ith"><b>Item ${i+1}</b><span class="m ipf">Total <b id="t${i}"></b><span class="pv"> &middot; Profit <b id="pf${i}"></b></span></span><button class="d x" onclick="items.splice(${i},1);if(!items.length)items.push(blank());rItems()">&#10005;</button></div>
  <div class="row"><div style="flex:2"><label class="l">Item name</label><input placeholder="e.g. Tempered Glass" value="${esc(x.n)}" oninput="items[${i}].n=this.value"></div><div><label class="l">Sr no</label><input placeholder="N/A" value="${esc(x.s)}" oninput="items[${i}].s=this.value"></div></div>
- <div class="row r4"><div><label class="l">Rate</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.r)}" oninput="items[${i}].r=this.value;calc()"></div><div><label class="l">Qty</label><input type="number" inputmode="numeric" placeholder="1" value="${esc(x.q)}" oninput="items[${i}].q=this.value;calc()"></div><div><label class="l">Disc</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.d)}" oninput="items[${i}].d=this.value;calc()"></div><div><label class="l">Cost</label><input type="number" inputmode="decimal" placeholder="-" value="${esc(x.k)}" oninput="items[${i}].k=this.value;calc()"></div></div></div>`).join('');calc()}
+ <div class="row r4"><div><label class="l">Rate</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.r)}" oninput="items[${i}].r=this.value;calc()"></div><div><label class="l">Qty</label><input type="number" inputmode="numeric" placeholder="1" value="${esc(x.q)}" oninput="items[${i}].q=this.value;calc()"></div><div><label class="l">Disc</label><input type="number" inputmode="decimal" placeholder="0" value="${esc(x.d)}" oninput="items[${i}].d=this.value;calc()"></div><div class="pv"><label class="l">Cost</label><input type="number" inputmode="decimal" placeholder="-" value="${esc(x.k)}" oninput="items[${i}].k=this.value;calc()"></div></div></div>`).join('');calc()}
 const cur=()=>({id:editId||'AZH'+DB.next,date:$('dt').value,cn:$('cn').value.trim(),cp:$('cp').value.trim(),ca:$('ca').value.trim(),items:items.filter(x=>x.n||+x.r).map(x=>({...x,n:x.n||'Item'})),paid:+$('paid').value||0,terms:$('terms').value.trim(),pm:PM});
 function tots(b){let sub=0,disc=0;b.items.forEach(x=>{sub+=(+x.r||0)*(+x.q||0);disc+=+x.d||0});const total=sub-disc;return{sub,disc,total,due:total-(+b.paid||0)}}
 function prof(b){let p=0,known=0,miss=0;b.items.forEach(x=>{if(x.k===''||x.k==null)miss++;else{known++;p+=lt(x)-(+x.k||0)*(+x.q||0)}});return{p,known,miss}}
@@ -295,21 +297,21 @@ async function scan(){beepInit();
  while(scanning){try{const r=await det.detect(v);if(r.length){const code=r[0].rawValue;beep();stopScan();history.back();SM==='prod'?prodCode(code,true):gotCode(code);return}}catch(e){}await new Promise(r=>setTimeout(r,250))}}
 function stopScan(){scanning=false;if(stream)stream.getTracks().forEach(t=>t.stop());$('scan').style.display='none'}
 function gotCode(code){let p=DB.prod[code];
- if(!p){const n=prompt('Naya product ('+code+')\nProduct ka naam:');if(!n)return;const r=prompt('Sale rate (Rs):');if(r===null)return;const k=prompt('Cost price (Rs) - khali chhod sakte ho:');p=DB.prod[code]=mkp(n,r,k);save()}
+ if(!p){const n=prompt('Naya product ('+code+')\nProduct ka naam:');if(!n)return;const r=prompt('Sale rate (Rs):');if(r===null)return;const k=OWN?prompt('Cost price (Rs) - khali chhod sakte ho:'):null;p=DB.prod[code]=mkp(n,r,k);save()}
  items=items.filter(x=>x.n||x.r);const e=items.find(x=>x.c===code);
  if(e)e.q=(+e.q||0)+1;else items.push({c:code,n:p.n,s:'',r:p.r,q:1,d:'',k:p.k==null?'':p.k});rItems()}
 
 /* products */
 function prodCode(code,again){const p=DB.prod[code];
  if(p)alert(p.n+' - Rs '+f(p.r)+' pehle se saved hai');
- else{const n=prompt('Naya product ('+code+')\nNaam:');if(n){const r=prompt('Sale rate (Rs):');if(r!==null){const k=prompt('Cost price (Rs) - khali chhod sakte ho:');DB.prod[code]=mkp(n,r,k);save();const sq=prompt('Stock (kitne piece hain)? khali = track nahi');if(sq!==null&&sq.trim()!==''&&!isNaN(+sq)){DBX.stock[code]=+sq;xsave();window.cloudStock&&cloudStock()}rProd()}}}
+ else{const n=prompt('Naya product ('+code+')\nNaam:');if(n){const r=prompt('Sale rate (Rs):');if(r!==null){if(!OWN)toast('Cost nahi pucha. Cost ke liye pehle aankh wala Owner view kholo');const k=OWN?prompt('Cost price (Rs) - khali chhod sakte ho:'):null;DB.prod[code]=mkp(n,r,k);save();const sq=prompt('Stock (kitne piece hain)? khali = track nahi');if(sq!==null&&sq.trim()!==''&&!isNaN(+sq)){DBX.stock[code]=+sq;xsave();window.cloudStock&&cloudStock()}rProd()}}}
  if(again)setTimeout(scan,300)}
 function pAdd(){const c=prompt('Barcode number:');if(c&&c.trim())prodCode(c.trim(),false)}
 function rProd(){const q=($('pq').value||'').toLowerCase();
  const e=Object.entries(DB.prod).filter(([c,p])=>(c+p.n).toLowerCase().includes(q)).sort((a,b)=>String(a[1].n).localeCompare(b[1].n));
- $('plist').innerHTML=e.map(([c,p])=>`<div class="card bill"><div class="bh"><b>${esc(p.n)}</b><span class="badge bl">₹${f(p.r)}</span></div><div class="kv"><div><span>Barcode</span> ${esc(c)}</div><div><span>Stock</span> ${stkTxt(c)}</div><div><span>Cost</span> ${p.k==null?'-':'₹'+f(p.k)}</div><div><span>Profit/pc</span> ${p.k==null?'-':'<b class="pos">₹'+f(p.r-p.k)+'</b>'}</div></div><div class="acts"><button class="ob gn" data-c="${esc(c)}" onclick="pStock(this.dataset.c)">+ Stock</button><button class="ob bl" data-c="${esc(c)}" onclick="pEdit(this.dataset.c)">Edit</button><button class="ob rd" data-c="${esc(c)}" onclick="pDel(this.dataset.c)">Delete</button></div></div>`).join('')||'<p class="m">Koi product nahi</p>';
+ $('plist').innerHTML=e.map(([c,p])=>`<div class="card bill"><div class="bh"><b>${esc(p.n)}</b><span class="badge bl">₹${f(p.r)}</span></div><div class="kv"><div><span>Barcode</span> ${esc(c)}</div><div><span>Stock</span> ${stkTxt(c)}</div><div class="pv"><span>Cost</span> ${p.k==null?'-':'₹'+f(p.k)}</div><div class="pv"><span>Profit/pc</span> ${p.k==null?'-':'<b class="pos">₹'+f(p.r-p.k)+'</b>'}</div></div><div class="acts"><button class="ob gn" data-c="${esc(c)}" onclick="pStock(this.dataset.c)">+ Stock</button><button class="ob bl" data-c="${esc(c)}" onclick="pEdit(this.dataset.c)">Edit</button><button class="ob rd" data-c="${esc(c)}" onclick="pDel(this.dataset.c)">Delete</button></div></div>`).join('')||'<p class="m">Koi product nahi</p>';
  $('pcnt').textContent=e.length}
-function pEdit(c){const p=DB.prod[c],n=prompt('Naam',p.n);if(n===null)return;const r=prompt('Sale rate (Rs)',p.r);if(r===null)return;const k=prompt('Cost price (Rs) - khali = nahi',p.k==null?'':p.k);if(k===null)return;DB.prod[c]=mkp(n||p.n,r,k);save();rProd()}
+function pEdit(c){const p=DB.prod[c],n=prompt('Naam',p.n);if(n===null)return;const r=prompt('Sale rate (Rs)',p.r);if(r===null)return;const k=OWN?prompt('Cost price (Rs) - khali = nahi',p.k==null?'':p.k):(p.k==null?'':p.k);if(k===null)return;DB.prod[c]=mkp(n||p.n,r,k);save();rProd()}
 function pDel(c){if(confirm('Delete karna hai?')){delete DB.prod[c];delete DBX.stock[c];xsave();window.cloudStock&&cloudStock();save();rProd()}}
 
 /* reset */
@@ -359,7 +361,7 @@ async function unlock(){
  if(Date.now()<lockedUntil){$('lerr2').textContent='Thodi der baad try karo';return}
  if(await mpCheck($('lv').value.trim())){tries=0;$('lock').style.display='none';$('lv').value='';$('lerr2').textContent=''}
  else{tries++;$('lv').value='';if(tries>=5){tries=0;lockedUntil=Date.now()+30000;$('lerr2').textContent='5 baar galat. 30 second ruko'}else $('lerr2').textContent='Galat MPIN'}}
-function mpLbl(){const on=hasMP();$('mpst').textContent=on?'MPIN ON: Chrome se hatke 30 second baad wapas aane par MPIN puchhega.':'MPIN OFF: App bina lock ke khulta hai.';
+function mpLbl(){const on=hasMP();$('mpst').textContent=on?'MPIN ON: Chrome se hatke 30 second baad wapas aane par MPIN puchhega. Cost aur profit dekhne ke liye upar aankh wala icon dabake MPIN daalo.':'MPIN OFF: App bina lock ke khulta hai. Cost aur profit chhupe rakhne ke liye MPIN set karo.';
  $('mpb').innerHTML=on?'<button class="g" onclick="mpChange()">Change MPIN</button><button class="d" onclick="mpRemove()">Remove MPIN</button>':'<button onclick="mpSet()">Set MPIN</button>'}
 async function mpNew(){
  const a=await askPin('Naya MPIN daalo (4 se 10 digit)');if(a===null)return false;
@@ -513,14 +515,26 @@ function qrCancel(){qrHide=true;renderQR()}
 function saveUPI(){const v=($('upiid').value||'').trim();if(v&&!upiOk(v)){alert('UPI ID sahi nahi lag raha (jaise 9933831321@ybl)');return}
  DB.upi=v;save();qrHide=false;qrLast='';$('upist').textContent=v?'Save ho gaya':'UPI ID hata diya';renderQR()}
 
+/* owner view (cost and profit hidden by default) */
+let OWN=false,ownT=null;
+const EYE_ON='<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',EYE_OFF='<path d="M3 3l18 18"/><path d="M10.6 6.1A9.7 9.7 0 0 1 12 6c5 0 8.5 4 9.5 6a12 12 0 0 1-2.6 3.3M6.6 6.7A12 12 0 0 0 2.5 12c1 2 4.5 6 9.5 6a9.6 9.6 0 0 0 3.2-.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
+function setOwn(v){OWN=v;document.body.classList.toggle('own',v);$('eyes').innerHTML=v?EYE_ON:EYE_OFF;$('eyeb').classList.toggle('on',v);clearTimeout(ownT);
+ if(v)ownT=setTimeout(()=>{setOwn(false);toast('Owner view band ho gaya')},120000)}
+async function togOwn(){if(OWN){setOwn(false);return}
+ if(!hasMP()){alert('Cost aur profit chhupane ke liye pehle Settings me App MPIN set karo. MPIN set hone ke baad hi ye aankh wala icon cost dikhayega.');return}
+ const v=await askPin('Owner view ke liye MPIN daalo');if(v===null)return;
+ if(!await mpCheck(v)){alert('Galat MPIN');return}
+ setOwn(true);toast('Owner view chalu (2 minute baad band)')}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&OWN)setOwn(false)});
+
 /* history, customers, backup */
 function rHist(){const q=$('hq').value.toLowerCase(),d1=$('hf').value,d2=$('ht').value;
  const L=DB.bills.slice().reverse().filter(b=>{const d=(b.date||'').slice(0,10);return (b.id+(b.cn||'')+(b.cp||'')).toLowerCase().includes(q)&&(!d1||d>=d1)&&(!d2||d<=d2)});
  let sale=0,paid=0,pf=0,nc=0;L.forEach(b=>{sale+=tots(b).total;paid+=+b.paid||0;const q=prof(b);pf+=q.p;if(q.miss)nc++});
  const mo={};L.forEach(b=>{const k=b.pm||'Other';mo[k]=(mo[k]||0)+(+b.paid||0)});const mtxt=Object.entries(mo).map(([k,v])=>k+' ₹'+f(v)).join(' &middot; ');
- $('hsum').innerHTML=`<div class="kpi"><small>Total sale</small><b>₹${f(sale)}</b><small>${L.length} bill</small></div><div class="row kp2"><div><small>Received</small><b class="gr">₹${f(paid)}</b></div><div><small>Due</small><b class="rd">₹${f(sale-paid)}</b></div><div><small>Profit</small><b class="gr">₹${f(pf)}</b></div></div><small style="margin-top:10px">${mtxt}</small>${nc?`<small style="margin-top:10px">${nc} bill me cost nahi (profit me poora nahi ginta)</small>`:''}`;
+ $('hsum').innerHTML=`<div class="kpi"><small>Total sale</small><b>₹${f(sale)}</b><small>${L.length} bill</small></div><div class="row kp2"><div><small>Received</small><b class="gr">₹${f(paid)}</b></div><div><small>Due</small><b class="rd">₹${f(sale-paid)}</b></div><div class="pv"><small>Profit</small><b class="gr">₹${f(pf)}</b></div></div><small style="margin-top:10px">${mtxt}</small>${nc?`<small class="pv" style="margin-top:10px">${nc} bill me cost nahi (profit me poora nahi ginta)</small>`:''}`;
  $('hist').innerHTML=L.map(b=>{const t=tots(b);return `<div class="card bill"><div class="bh"><b>${b.id}</b><span class="badge ${t.due>0?'rd':'gn'}">${t.due>0?'Due':'Paid'}</span></div>
- <div class="kv"><div><span>Date</span> ${fd(b.date)}</div><div><span>Customer</span> ${esc(b.cn||'N/A')}</div><div><span>Phone</span> ${esc(b.cp||'\u2014')}</div><div><span>Items</span> ${b.items.length}</div><div><span>Total</span> <b>₹${f(t.total)}</b></div><div><span>Due</span> <b class="${t.due>0?'neg':'pos'}">₹${f(t.due)}</b></div>${(()=>{const q=prof(b);return `<div><span>Profit</span> ${q.known?`<b class="${q.p>=0?'pos':'neg'}">₹${f(q.p)}${q.miss?' *':''}</b>`:'<span style="font-size:13px">cost nahi</span>'}</div>`})()}</div>
+ <div class="kv"><div><span>Date</span> ${fd(b.date)}</div><div><span>Customer</span> ${esc(b.cn||'N/A')}</div><div><span>Phone</span> ${esc(b.cp||'\u2014')}</div><div><span>Items</span> ${b.items.length}</div><div><span>Total</span> <b>₹${f(t.total)}</b></div><div><span>Due</span> <b class="${t.due>0?'neg':'pos'}">₹${f(t.due)}</b></div>${(()=>{const q=prof(b);return `<div class="pv"><span>Profit</span> ${q.known?`<b class="${q.p>=0?'pos':'neg'}">₹${f(q.p)}${q.miss?' *':''}</b>`:'<span style="font-size:13px">cost nahi</span>'}</div>`})()}</div>
  <div class="acts"><button class="ob gn" onclick="act('${b.id}','p')">Print</button><button class="ob gn" onclick="act('${b.id}','i')">Image</button><button class="ob gn" onclick="act('${b.id}','f')">PDF</button><button class="ob gn" onclick="act('${b.id}','w')">WhatsApp</button><button class="ob bl" onclick="act('${b.id}','e')">Edit</button><button class="ob rd" onclick="act('${b.id}','x')">Delete</button>${t.due>0?`<button class="ob gn" onclick="act('${b.id}','r')">Due received</button>`:''}</div></div>`}).join('')||'<p class="m">Koi bill nahi</p>'}
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 function hToday(){$('hf').value=$('ht').value=today();rHist()}
