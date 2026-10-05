@@ -46,7 +46,7 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
 .it input{background:#fff}
 .tot{display:flex;justify-content:space-between;padding:3px 0}
 .tot.big{font-size:15px;padding:5px 0}
-.tab{display:none}.tab.on{display:block}
+.tab{display:none}.tab.on{display:block;animation:fi .2s ease}@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .sr{position:relative;margin:9px 0}
 .sr svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--m)}
 .sr input{padding:11px 12px 11px 38px;margin:0;border-radius:12px;background:#fff;border-color:var(--b);box-shadow:var(--sh)}
@@ -68,12 +68,12 @@ button.sm{min-height:28px;padding:0 10px;font-size:12px;border-radius:8px}
 .bn{position:fixed;left:0;right:0;bottom:0;z-index:12;display:flex;background:#fff;border-top:1px solid var(--b);padding-bottom:env(safe-area-inset-bottom)}
 .bn button{flex:1;min-height:var(--nh);background:none;color:var(--m);border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:9.5px;font-weight:600;padding:5px 0}
 .bn svg{width:21px;height:21px;stroke:currentColor}
-.bn button.on{color:var(--p);box-shadow:inset 0 2px 0 var(--p)}
+.bn button{position:relative}.bn button.on{color:var(--p)}.bn button.on::before{content:'';position:absolute;top:0;left:32%;right:32%;height:3px;border-radius:0 0 4px 4px;background:var(--p)}
 .act{position:fixed;left:0;right:0;bottom:calc(var(--nh) + env(safe-area-inset-bottom));z-index:11;display:flex;align-items:center;gap:8px;padding:8px 12px;background:#fff;border-top:1px solid var(--b);box-shadow:0 -3px 12px rgba(15,23,42,.07)}
 .act .tt{flex:1;min-width:0}.act .tt span{display:block;font-size:10px;color:var(--m);font-weight:600;text-transform:uppercase;letter-spacing:.06em}.act .tt b{font-size:17px}
 .act button{padding:0 16px}
-.toast{position:fixed;left:50%;bottom:calc(var(--nh) + 80px);transform:translateX(-50%);background:#0f172a;color:#fff;padding:8px 14px;border-radius:999px;font-size:12px;z-index:30;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
-.toast.on{opacity:1}
+.toast{position:fixed;left:50%;bottom:calc(var(--nh) + 80px);transform:translateX(-50%);background:#0f172a;color:#fff;padding:8px 14px;border-radius:999px;font-size:12px;z-index:30;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90%;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(-4px)}
 .ovl{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}.ovl .card{width:100%;max-width:320px}
 #login{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;align-items:center;justify-content:center;padding:20px}#login .card{width:100%;max-width:340px;padding:18px}
 .c2{padding:10px;margin:7px 0}
@@ -96,11 +96,22 @@ body.view .bar,body.view .stat,body.view .w,body.view .act,body.view .bn,body.vi
 #jchips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 body:not(.own) .pv{display:none!important}
 #eyeb.on{background:#fde8ec}#eyeb.on svg{stroke:#c62839}
+.ob{display:inline-flex;align-items:center;justify-content:center;gap:6px}.ob svg{width:14px;height:14px;stroke:currentColor;flex:none}
+button{transition:background .15s,transform .1s}button:active{transform:scale(.98)}
+.bill{position:relative;overflow:hidden;padding:12px 12px 12px 16px}
+.bill::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ac,var(--b))}
+.ac-bl{--ac:#1d4ed8}.ac-am{--ac:#d97706}.ac-gn{--ac:#16a34a}.ac-gy{--ac:#94a3b8}.ac-rd{--ac:#c62839}
+.empty{text-align:center;padding:34px 16px;color:var(--m)}.empty b{display:block;color:var(--t);font-size:14px;margin:10px 0 2px}.empty span{font-size:12px}
+.eic{width:56px;height:56px;border-radius:50%;background:var(--pl);display:grid;place-items:center;margin:0 auto}.eic svg{width:26px;height:26px;stroke:var(--p)}
+#hsum{position:relative;overflow:hidden}#hsum::after{content:'';position:absolute;right:-34px;top:-34px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.vh{max-width:340px;margin:0 auto 14px;display:flex;gap:10px;align-items:center}
+.vcard{border-top:3px solid var(--p)}
+.act .tt span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #scan{position:fixed;inset:0;background:#000;display:none;flex-direction:column;z-index:40}
 #scan video{flex:1;width:100%;object-fit:cover}
-</style></head><body><header class="bar"><div class="ttl"><div class="brand">Azhari Mobile Service Center</div><div class="sub" id="ttl">New Bill</div></div><span class="dot" id="dot"></span>
+</style></head><body><header class="bar"><div class="logo">A</div><div class="ttl"><div class="brand">Azhari Mobile Service Center</div><div class="sub" id="ttl">New Bill</div></div><span class="dot" id="dot"></span>
  <button class="ico" onclick="conn()" aria-label="Connect printer"><svg viewBox="0 0 24 24"><path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></button><button class="ico" id="eyeb" onclick="togOwn()" aria-label="Owner view"><svg id="eyes" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M10.6 6.1A9.7 9.7 0 0 1 12 6c5 0 8.5 4 9.5 6a12 12 0 0 1-2.6 3.3M6.6 6.7A12 12 0 0 0 2.5 12c1 2 4.5 6 9.5 6a9.6 9.6 0 0 0 3.2-.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg></button></header>
-<div class="stat" id="st">Printer connect nahi hai</div>
+<div class="stat" id="st">Printer not connected</div>
 <div class="w">
 <div class="tab on" id="tab0">
  <div id="eb" class="card" style="display:none"><div class="h" style="color:#c2410c">Edit mode</div><b id="ebn"></b><button class="d" style="margin-top:8px;width:100%" onclick="reset()">Cancel edit</button></div>
@@ -108,13 +119,13 @@ body:not(.own) .pv{display:none!important}
   <div class="row"><div><label class="l">Customer name</label><input id="cn" list="cl" placeholder="Name" onchange="fill()"></div><div><label class="l">Phone</label><input id="cp" list="cl" inputmode="tel" placeholder="Mobile" onchange="fill()"></div></div>
   <details id="dAddr" class="dt"><summary>+ Address (optional)</summary><input id="ca" placeholder="Address"></details><datalist id="cl"></datalist></div>
  <div class="card c2"><div class="ih"><div class="h" style="margin:0">Items</div><div class="row" style="flex:none;width:58%"><button class="g sm2" onclick="items.push(blank());rItems()">+ Item</button><button class="sm2" onclick="SM='bill';scan()">Scan</button></div></div><div id="items"></div></div>
- <div class="card c2"><div class="row" style="align-items:flex-end"><div><label class="l" style="margin-top:0">Amount paid</label><input id="paid" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div><div class="duebox"><span class="l" style="margin:0">Due</span><b id="due"></b></div></div>
+ <div class="card c2"><div class="row" style="align-items:flex-end"><div><div style="display:flex;justify-content:space-between;align-items:center"><label class="l" style="margin:0">Amount paid</label><button class="g sm" onclick="payFull()">Full</button></div><input id="paid" type="number" inputmode="decimal" placeholder="0" oninput="calc()"></div><div class="duebox"><span class="l" style="margin:0">Due</span><b id="due"></b></div></div>
   <div class="row pmr" style="margin-top:8px"><button class="ob" id="pm_Cash" onclick="setPM('Cash')">Cash</button><button class="ob" id="pm_UPI" onclick="setPM('UPI')">UPI</button><button class="ob" id="pm_Card" onclick="setPM('Card')">Card</button></div>
   <div id="qrbox" style="display:none;text-align:center;margin-top:10px;padding:12px;border:1px dashed var(--b);border-radius:12px">
-   <div id="qrmsg" class="m" style="display:none">UPI ID set nahi hai. Settings me apna UPI ID daalo.</div>
+   <div id="qrmsg" class="m" style="display:none">UPI ID not set. Add your UPI ID in Settings.</div>
    <div id="qrmain"><canvas id="qrc" width="245" height="245" style="width:245px;max-width:100%;image-rendering:pixelated;background:#fff"></canvas>
-    <div style="font-size:20px;font-weight:700;margin-top:4px">&#8377;<span id="qram"></span></div><div class="m" style="font-size:11.5px">Customer UPI se scan karke pay kare</div>
-    <div class="row" style="margin-top:8px"><button class="ob" onclick="qrCancel()">Hide QR</button><button onclick="qrPaid()">Payment mil gaya</button></div></div></div>
+    <div style="font-size:20px;font-weight:700;margin-top:4px">&#8377;<span id="qram"></span></div><div class="m" style="font-size:11.5px">Customer scans with any UPI app to pay</div>
+    <div class="row" style="margin-top:8px"><button class="ob" style="flex:1" onclick="qrCancel()">Hide QR</button><button style="flex:1.7;white-space:nowrap" onclick="qrPaid()">Payment received</button></div></div></div>
   <div class="mini">Sub <span id="sub"></span> &middot; Disc <span id="dis"></span> &middot; Total <b id="tot"></b><span class="pv"> &middot; Profit <b id="pft"></b></span></div>
   <details class="dt"><summary>Terms</summary><textarea id="terms" rows="2" onchange="DB.terms=this.value;save()"></textarea></details></div>
 </div>
@@ -132,7 +143,7 @@ body:not(.own) .pv{display:none!important}
   <div class="row"><div><label class="l" style="margin-top:0">Customer name</label><input id="jn" placeholder="Name"></div><div><label class="l" style="margin-top:0">Phone</label><input id="jp" inputmode="tel" placeholder="Mobile"></div></div>
   <label class="l">Device / model</label><input id="jd" placeholder="e.g. Redmi Note 10">
   <label class="l">IMEI / serial (optional)</label><input id="ji" placeholder="IMEI">
-  <label class="l">Problem</label><input id="jx" placeholder="e.g. Display toota hai">
+  <label class="l">Problem</label><input id="jx" placeholder="e.g. Cracked display">
   <div class="row"><div><label class="l">Estimate</label><input id="je" type="number" inputmode="decimal" placeholder="0"></div><div><label class="l">Advance</label><input id="ja" type="number" inputmode="decimal" placeholder="0"></div></div>
   <label class="l">Notes (optional)</label><input id="jnote" placeholder="Note">
   <div class="row" style="margin-top:10px"><button class="ob" onclick="jCancel()">Cancel</button><button onclick="jSave()">Save job</button></div></div>
@@ -146,27 +157,31 @@ body:not(.own) .pv{display:none!important}
  <div class="m" style="margin:8px 4px"><span id="pcnt">0</span> products saved</div><div id="plist"></div></div>
 
 <div class="tab" id="tab3">
- <div class="card"><div class="h">Printer</div><p class="m" style="margin:0 0 10px">Printer on karke Connect dabao. Phone ke Bluetooth settings me pair karna zaroori nahi.</p><button style="width:100%" onclick="conn()">Connect printer</button></div>
- <div class="card"><div class="h">Backup / Restore</div><p class="m" style="margin:0 0 10px">Cloud save on hai, phir bhi kabhi-kabhi backup le lo.</p>
+ <div class="card"><div class="h">Printer</div><p class="m" style="margin:0 0 10px">Turn the printer on and tap Connect. You do not need to pair it in the phone's Bluetooth settings.</p><button style="width:100%" onclick="conn()">Connect printer</button>
+  <div class="m" id="pinfo" style="font-size:11.5px;margin:10px 0 0;word-break:break-word">Not connected</div>
+  <div class="row" style="margin-top:10px"><button class="ob gn" onclick="testPrint()">Test print</button><button class="ob" id="slowb" onclick="togSlow()">Slow mode: Off</button></div>
+  <div class="l" style="margin-top:10px">Write mode (change only if printing fails)</div>
+  <div class="row"><button class="ob" id="pw_auto" onclick="setPW('auto')">Auto</button><button class="ob" id="pw_res" onclick="setPW('res')">With response</button><button class="ob" id="pw_nores" onclick="setPW('nores')">No response</button></div></div>
+ <div class="card"><div class="h">Backup / Restore</div><p class="m" style="margin:0 0 10px">Cloud save is on. Still, take a backup now and then.</p>
   <div class="row"><button onclick="bk()">Backup</button><button class="g" onclick="$('rf').click()">Restore</button></div>
   <input id="rf" type="file" accept=".json" style="display:none" onchange="rs(this)"></div>
  <div class="card"><div class="h">Account</div><button class="d" style="width:100%" onclick="doLogout()">Logout</button></div>
- <div class="card"><div class="h">UPI ID (QR ke liye)</div><input id="upiid" placeholder="e.g. 9933831321@ybl" autocapitalize="off" autocomplete="off"><button style="width:100%;margin-top:8px" onclick="saveUPI()">Save UPI ID</button><div class="m" id="upist" style="margin-top:6px;font-size:12px"></div></div>
+ <div class="card"><div class="h">UPI ID (for QR)</div><input id="upiid" placeholder="e.g. 9933831321@ybl" autocapitalize="off" autocomplete="off"><button style="width:100%;margin-top:8px" onclick="saveUPI()">Save UPI ID</button><div class="m" id="upist" style="margin-top:6px;font-size:12px"></div></div>
  <div class="card"><div class="h">App MPIN</div><p class="m" id="mpst" style="margin:0 0 10px"></p><div class="row" id="mpb"></div></div>
  <div class="card"><div class="h">Scan sound</div><button class="g" id="sndb" style="width:100%" onclick="togSnd()"></button></div>
- <div class="card"><div class="h">Danger zone</div><p class="m" style="margin:0 0 10px">Reset se saare bills, customers, products, repair jobs aur stock delete ho jate hain aur invoice AZH1 se shuru hota hai. PIN lagta hai.</p><button class="d" style="width:100%" onclick="doReset()">Reset app</button></div>
- <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v17 (new)</div></div>
+ <div class="card"><div class="h">Danger zone</div><p class="m" style="margin:0 0 10px">Reset deletes all bills, customers, products, repair jobs and stock, and invoice numbers start again from AZH1. A PIN is required.</p><button class="d" style="width:100%" onclick="doReset()">Reset app</button></div>
+ <div class="card"><div class="h">Saved products</div><b id="pc">0</b><div class="m" style="margin-top:8px;font-size:12px">App version v22 (printer fix)</div></div>
 </div>
 </div>
 
-<div class="act" id="act"><div class="tt"><span>Total</span><b id="tot2">0.00</b></div><button class="g" onclick="sv(false)">Save</button><button onclick="sv(true)">Save &amp; Print</button><button class="wa" onclick="sv(false,true)" aria-label="Save and send on WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg></button></div>
+<div class="act" id="act"><div class="tt"><span id="tt1">Total</span><b id="tot2">₹0.00</b></div><button class="g" onclick="sv(false)">Save</button><button onclick="sv(true)">Save &amp; Print</button><button class="wa" onclick="sv(false,true)" aria-label="Save and send on WhatsApp"><svg viewBox="0 0 24 24"><path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg></button></div>
 <nav class="bn" id="nav"></nav>
 <div class="toast" id="toast"></div>
 
-<div id="view" class="vw"><div class="vcard" id="vcard"></div><div class="row" style="max-width:340px;margin:14px auto 0"><button onclick="img(VB)">Save as Image</button><button class="g" onclick="pdf(VB)">Save as PDF</button></div></div>
-<div id="pin" class="ovl"><div class="card"><div class="h">Security PIN</div><p class="m" id="pmsg" style="margin:0 0 8px">Reset karne ke liye PIN daalo</p><input id="pv" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN"><div class="row" style="margin-top:10px"><button class="ob" onclick="pinDone(false)">Cancel</button><button onclick="pinDone(true)">OK</button></div></div></div>
-<div id="lock" class="ovl" style="background:var(--bg);z-index:70"><div class="card" style="text-align:center"><div class="logo lg" style="margin:0 auto 10px">A</div><div class="brand" style="font-size:17px">Azhari Billing</div><p class="m" style="margin:2px 0 10px">MPIN daalo</p><input id="lv" type="password" inputmode="numeric" autocomplete="off" placeholder="MPIN" style="text-align:center;letter-spacing:.3em" onkeydown="if(event.key==='Enter')unlock()"><div id="lerr2" style="color:var(--r);min-height:18px;font-size:12px"></div><button style="width:100%;margin-top:6px" onclick="unlock()">Unlock</button></div></div>
-<div id="login"><div class="card"><div class="logo lg">A</div><div class="brand" style="font-size:18px">Azhari Billing</div><div class="m" style="margin:2px 0 12px">Login karke aage badho</div>
+<div id="view" class="vw"><div class="vh"><div class="logo">A</div><div><div class="brand">Azhari Mobile Service Center</div><div class="sub">Digital receipt</div></div></div><div class="vcard" id="vcard"></div><div class="row" style="max-width:340px;margin:14px auto 0"><button onclick="img(VB)">Save as Image</button><button class="g" onclick="pdf(VB)">Save as PDF</button></div></div>
+<div id="pin" class="ovl"><div class="card"><div class="h">Security PIN</div><p class="m" id="pmsg" style="margin:0 0 8px">Enter PIN to reset</p><input id="pv" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN"><div class="row" style="margin-top:10px"><button class="ob" onclick="pinDone(false)">Cancel</button><button onclick="pinDone(true)">OK</button></div></div></div>
+<div id="lock" class="ovl" style="background:var(--bg);z-index:70"><div class="card" style="text-align:center"><div class="logo lg" style="margin:0 auto 10px">A</div><div class="brand" style="font-size:17px">Azhari Billing</div><p class="m" style="margin:2px 0 10px">Enter MPIN</p><input id="lv" type="password" inputmode="numeric" autocomplete="off" placeholder="MPIN" style="text-align:center;letter-spacing:.3em" onkeydown="if(event.key==='Enter')unlock()"><div id="lerr2" style="color:var(--r);min-height:18px;font-size:12px"></div><button style="width:100%;margin-top:6px" onclick="unlock()">Unlock</button></div></div>
+<div id="login"><div class="card"><div class="logo lg">A</div><div class="brand" style="font-size:18px">Azhari Billing</div><div class="m" style="margin:2px 0 12px">Sign in to continue</div>
  <input id="le" type="email" placeholder="Email" autocomplete="username">
  <input id="lp" type="password" placeholder="Password" autocomplete="current-password">
  <div id="lerr" style="color:var(--r);min-height:20px"></div>
@@ -178,9 +193,9 @@ const $=id=>document.getElementById(id),W=32;
 const SHOP={n:'Azhari Mobile Service Center',a:'Raniganj Railway Station Nearby Bus Stand Road 713347',p:'9933831321 / 6294399353'};
 let DB={bills:[],prod:{},next:1,terms:'No warranty, no guarantee after delivery.'};
 try{const s=localStorage.getItem('azh');if(s)DB=Object.assign(DB,JSON.parse(s))}catch(e){}
-const saveL=()=>{try{localStorage.setItem('azh',JSON.stringify(DB))}catch(e){alert('Save nahi hua')}};
+const saveL=()=>{try{localStorage.setItem('azh',JSON.stringify(DB))}catch(e){alert('Could not save')}};
 const save=()=>{saveL();window.cloudMeta&&cloudMeta()},cloudB=b=>window.cloudBill&&cloudBill(b);
-const f=n=>(+n||0).toFixed(2),st=t=>{$('st').textContent=t;if(/^Connected/.test(t))$('dot').classList.add('on');else if(/^(Printer disconnect|Connect fail)/.test(t))$('dot').classList.remove('on');if(t!=='Printer connect nahi hai')toast(t)};
+const f=n=>(+n||0).toFixed(2),st=t=>{$('st').textContent=t;if(/^Connected/.test(t))$('dot').classList.add('on');else if(/^(Printer disconnected|Connection failed)/.test(t))$('dot').classList.remove('on');if(t!=='Printer not connected')toast(t)};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fd=s=>{const d=new Date(s);return isNaN(d)?'':d.toLocaleString('en-IN',{dateStyle:'short',timeStyle:'short'})};
 const blank=()=>({c:'',n:'',s:'',r:'',q:1,d:'',k:''});
@@ -195,12 +210,13 @@ TT.forEach((t,i)=>{const b=document.createElement('button');b.innerHTML='<svg vi
 let curT=0,armed=false;
 function show(i){curT=i;document.querySelectorAll('.tab').forEach((e,j)=>e.classList.toggle('on',i===j));[...$('nav').children].forEach((b,j)=>b.classList.toggle('on',i===j));
  $('ttl').textContent=TT[i];$('act').style.display=i===0?'flex':'none';
- if(i===1)rHist();if(i===2)rJobs();if(i===3)rCust();if(i===4)rProd();if(i===5){$('pc').textContent=Object.keys(DB.prod).length;sndLbl();mpLbl();$('upiid').value=DB.upi||''}window.scrollTo(0,0)}
+ if(i===1)rHist();if(i===2)rJobs();if(i===3)rCust();if(i===4)rProd();if(i===5){$('pc').textContent=Object.keys(DB.prod).length;sndLbl();mpLbl();$('upiid').value=DB.upi||'';pwLbl()}window.scrollTo(0,0)}
 function go(i){if(i===curT)return;if(curT===0)history.pushState({t:i},'');else if(i===0){history.back();return}else history.replaceState({t:i},'');show(i)}
 const tab=go;
 function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('on'),2200)}
+function exitApp(){try{const A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A&&A.exitApp){A.exitApp();return}}catch(e){}history.back()}
 addEventListener('popstate',e=>{const q=e.state||{};if(scanning)stopScan();
- if(q.base){if(armed){armed=false;history.back();return}armed=true;history.pushState({t:0},'');toast('Bahar jane ke liye dobara Back dabao');setTimeout(()=>armed=false,2000);if(curT!==0)show(0);return}
+ if(q.base){if(armed){armed=false;exitApp();return}armed=true;history.pushState({t:0},'');toast('Press Back again to exit');setTimeout(()=>armed=false,2000);if(curT!==0)show(0);return}
  if((q.t||0)!==curT)show(q.t||0)});
 
 /* form */
@@ -211,14 +227,14 @@ function rItems(){
 const cur=()=>({id:editId||'AZH'+DB.next,date:$('dt').value,cn:$('cn').value.trim(),cp:$('cp').value.trim(),ca:$('ca').value.trim(),items:items.filter(x=>x.n||+x.r).map(x=>({...x,n:x.n||'Item'})),paid:+$('paid').value||0,terms:$('terms').value.trim(),pm:PM});
 function tots(b){let sub=0,disc=0;b.items.forEach(x=>{sub+=(+x.r||0)*(+x.q||0);disc+=+x.d||0});const total=sub-disc;return{sub,disc,total,due:total-(+b.paid||0)}}
 function prof(b){let p=0,known=0,miss=0;b.items.forEach(x=>{if(x.k===''||x.k==null)miss++;else{known++;p+=lt(x)-(+x.k||0)*(+x.q||0)}});return{p,known,miss}}
-function calc(){renderQR();items.forEach((x,i)=>{const e=$('t'+i);if(e)e.textContent=f(lt(x));const g=$('pf'+i);if(g)g.textContent=(x.k===''||x.k==null)?'-':'₹'+f(lt(x)-(+x.k||0)*(+x.q||0))});const t=tots(cur());$('sub').textContent=f(t.sub);$('dis').textContent=f(t.disc);$('tot').textContent=$('tot2').textContent=f(t.total);$('due').textContent=f(t.due);const pr=prof(cur());$('pft').textContent=pr.known?'₹'+f(pr.p)+(pr.miss?' *':''):'-'}
+function calc(){renderQR();items.forEach((x,i)=>{const e=$('t'+i);if(e)e.textContent=f(lt(x));const g=$('pf'+i);if(g)g.textContent=(x.k===''||x.k==null)?'-':fm(lt(x)-(+x.k||0)*(+x.q||0))});const t=tots(cur());$('sub').textContent=f(t.sub);$('dis').textContent=f(t.disc);$('tot').textContent=f(t.total);$('tot2').textContent=fm(t.total);const nI=cur().items.length;$('tt1').textContent=nI+' item'+(nI===1?'':'s');$('due').textContent=f(t.due);const pr=prof(cur());$('pft').textContent=pr.known?fm(pr.p)+(pr.miss?' *':''):'-'}
 function fill(){const p=$('cp').value.trim(),n=$('cn').value.trim();const m=DB.bills.slice().reverse().find(b=>(p&&b.cp===p)||(!p&&n&&b.cn===n));if(m){if(!$('cn').value)$('cn').value=m.cn;if(!$('cp').value)$('cp').value=m.cp;if(!$('ca').value)$('ca').value=m.ca||'';$('dAddr').open=!!$('ca').value}}
 function reset(){editId=null;jobLink=null;setPM('Cash');$('eb').style.display='none';$('dAddr').open=false;items=[blank()];['cn','cp','ca','paid'].forEach(k=>$(k).value='');$('inv').value='AZH'+DB.next;$('dt').value=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);$('terms').value=DB.terms;
  const s=new Set();DB.bills.forEach(b=>{if(b.cn)s.add(b.cn);if(b.cp)s.add(b.cp)});$('cl').innerHTML=[...s].map(v=>`<option value="${esc(v)}">`).join('');rItems()}
-async function sv(p,wa){const b=cur();if(!b.items.length){alert('Kam se kam ek item daalo');return}
- if(wa&&!waNum(b.cp)){alert('WhatsApp ke liye customer ka sahi phone number daalo');return}
+async function sv(p,wa){const b=cur();if(!b.items.length){alert('Add at least one item');return}
+ if(wa&&!waNum(b.cp)){alert('Enter a valid customer phone number for WhatsApp');return}
  b.items.forEach(x=>{if(x.c)DB.prod[x.c]=mkp(x.n,x.r,x.k===''||x.k==null?null:x.k)});const jl=jobLink;
- if(editId){const i=DB.bills.findIndex(x=>x.id===editId);if(i>=0){stk(DB.bills[i].items,1);DB.bills[i]=b}else DB.bills.push(b);stk(b.items,-1);save();cloudB(b);reset();tab(1);st('Bill update ho gaya '+b.id)}
+ if(editId){const i=DB.bills.findIndex(x=>x.id===editId);if(i>=0){stk(DB.bills[i].items,1);DB.bills[i]=b}else DB.bills.push(b);stk(b.items,-1);save();cloudB(b);reset();tab(1);st('Bill updated '+b.id)}
  else{DB.bills.push(b);DB.next++;stk(b.items,-1);save();cloudB(b);reset();st('Saved '+b.id)}
  if(jl){const j=DBX.jobs.find(x=>x.id===jl);if(j){j.st=3;j.bill=b.id;xsave();window.cloudJob&&cloudJob(j)}}
  if(wa)openWA(b,waNum(b.cp));
@@ -239,22 +255,65 @@ function lines(b){
  wrap('Terms: '+b.terms).forEach(x=>l(x));c('Thank you!');return L}
 
 /* bluetooth printing (ESC/POS, 58mm) */
-let ch=null;
+/* bluetooth printing: Capacitor BLE plugin or Web Bluetooth, ESC/POS 58mm */
 const SV=['000018f0-0000-1000-8000-00805f9b34fb','0000ff00-0000-1000-8000-00805f9b34fb','0000ffe0-0000-1000-8000-00805f9b34fb','0000fee7-0000-1000-8000-00805f9b34fb','0000ae30-0000-1000-8000-00805f9b34fb','e7810a71-73ae-499d-8c15-faa9aef0c3f2','49535343-fe7d-4ae5-8fa9-9fafd205e455'];
+const BLE={api:'',dev:null,ch:null,svc:'',chr:'',props:{},name:''};
+let PW={mode:'auto',slow:false};
+try{PW=Object.assign(PW,JSON.parse(localStorage.getItem('azhpw')||'{}'))}catch(e){}
+const capBle=()=>window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.BluetoothLe;
+const hex=u=>[...u].map(b=>b.toString(16).padStart(2,'0')).join('');
+const shortU=u=>String(u||'').split('-')[0].replace(/^0000/,'');
+const PREF=[['18f0','2af1'],['ff00','ff02'],['ffe0','ffe1'],['ae30','ae01'],['49535343-fe7d','49535343-8841'],['e7810a71','bef8d6c9']];
+function pickChar(L){const ok=p=>p&&(p.write||p.writeWithoutResponse),lc=u=>String(u).toLowerCase();
+ for(const [a,b] of PREF)for(const x of L)if(lc(x.s).includes(a))for(const c of x.cs)if(lc(c.u).includes(b)&&ok(c.p))return{s:x.s,c:c.u,p:c.p,o:c.o};
+ for(const x of L)for(const c of x.cs)if(ok(c.p)&&c.p.writeWithoutResponse)return{s:x.s,c:c.u,p:c.p,o:c.o};
+ for(const x of L)for(const c of x.cs)if(ok(c.p))return{s:x.s,c:c.u,p:c.p,o:c.o};
+ return null}
+function pinfo(){const e=$('pinfo');if(!e)return;const ok=BLE.api==='cap'?!!BLE.dev:!!BLE.ch;
+ const pr=BLE.props||{};e.textContent=ok?'Connected: '+BLE.name+' | service '+shortU(BLE.svc)+' | char '+shortU(BLE.chr)+' | '+(pr.writeWithoutResponse?'write-no-response ':'')+(pr.write?'write ':'')+'| mode '+PW.mode+(PW.slow?' | slow':''):'Not connected'}
+function pwLbl(){['auto','res','nores'].forEach(k=>{const e=$('pw_'+k);if(e)e.classList.toggle('sel',PW.mode===k)});const b=$('slowb');if(b)b.textContent='Slow mode: '+(PW.slow?'On':'Off');pinfo()}
+function pwSave(){try{localStorage.setItem('azhpw',JSON.stringify(PW))}catch(e){}}
+function setPW(m){PW.mode=m;pwSave();pwLbl()}
+function togSlow(){PW.slow=!PW.slow;pwSave();pwLbl()}
 async function conn(){
- if(!navigator.bluetooth){alert('Android Chrome me kholo');return false}
- try{const d=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:SV});
-  d.addEventListener('gattserverdisconnected',()=>{ch=null;st('Printer disconnect ho gaya')});
-  const s=await d.gatt.connect();ch=null;
-  for(const v of await s.getPrimaryServices()){for(const c of await v.getCharacteristics()){if(c.properties.writeWithoutResponse||c.properties.write){ch=c;break}}if(ch)break}
-  if(!ch)throw Error('Print characteristic nahi mila');
-  st('Connected: '+(d.name||'printer'));return true}catch(e){st('Connect fail: '+e.message);return false}}
-function bytes(b){const o=[0x1b,0x40],enc=s=>[...s].map(k=>{const c=k.charCodeAt(0);return c>31&&c<127?c:63});
- lines(b).forEach(x=>o.push(0x1b,0x61,x.a?1:0,0x1b,0x45,x.b?1:0,...enc(x.t),10));
- o.push(0x1b,0x61,0,0x1b,0x45,0,10,10,10);return new Uint8Array(o)}
-async function prt(b){
- if(!ch&&!await conn())return;
- try{const d=bytes(b);for(let i=0;i<d.length;i+=20){const p=d.slice(i,i+20);ch.properties.writeWithoutResponse?await ch.writeValueWithoutResponse(p):await ch.writeValue(p);await new Promise(r=>setTimeout(r,12))}st('Print bhej diya')}catch(e){st('Print fail: '+e.message);ch=null}}
+ const P=capBle(),useCap=!!P&&!navigator.bluetooth;
+ if(!useCap&&!navigator.bluetooth){alert('Bluetooth printing is not available here. Use Android Chrome, or add the Bluetooth LE plugin to the app.');return false}
+ try{
+  let pick,name,devId=null,gatt=null;
+  if(useCap){
+   await P.initialize({androidNeverForLocation:true});
+   const d=await P.requestDevice({optionalServices:SV});devId=d.deviceId;name=d.name;
+   await P.connect({deviceId:devId});
+   const r=await P.getServices({deviceId:devId});
+   pick=pickChar((r.services||[]).map(x=>({s:x.uuid,cs:(x.characteristics||[]).map(c=>({u:c.uuid,p:c.properties||{}}))})));
+   try{P.addListener('disconnected|'+devId,()=>{BLE.dev=null;pinfo();st('Printer disconnected')})}catch(e){}
+  }else{
+   const d=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:SV});name=d.name;
+   d.addEventListener('gattserverdisconnected',()=>{BLE.ch=null;pinfo();st('Printer disconnected')});
+   gatt=await d.gatt.connect();const L=[];
+   for(const v of await gatt.getPrimaryServices()){const cs=[];for(const c of await v.getCharacteristics())cs.push({u:c.uuid,p:c.properties||{},o:c});L.push({s:v.uuid,cs})}
+   pick=pickChar(L)}
+  if(!pick)throw Error('Printer write characteristic not found');
+  BLE.api=useCap?'cap':'web';BLE.dev=useCap?devId:null;BLE.ch=useCap?null:pick.o;BLE.svc=pick.s;BLE.chr=pick.c;BLE.props=pick.p;BLE.name=name||'printer';
+  st('Connected: '+BLE.name);pinfo();return true}
+ catch(e){const m=(e&&e.message)||String(e);st('Connection failed: '+m);return false}}
+function bytes(b){return bytesL(lines(b))}
+async function wr(p){const pr=BLE.props||{},mode=PW.mode;
+ const first=mode==='nores'?true:mode==='res'?false:!!pr.writeWithoutResponse;
+ const one=async nr=>{if(BLE.api==='cap'){const o={deviceId:BLE.dev,service:BLE.svc,characteristic:BLE.chr,value:hex(p)};if(nr)await capBle().writeWithoutResponse(o);else await capBle().write(o)}
+  else{const c=BLE.ch;if(nr&&typeof c.writeValueWithoutResponse==='function')await c.writeValueWithoutResponse(p);else await c.writeValue(p)}};
+ try{await one(first)}catch(e){if(mode!=='auto')throw e;const alt=!first;if(alt?pr.writeWithoutResponse:pr.write)await one(alt);else throw e}}
+async function sendBytes(d){const dl=PW.slow?40:12;for(let i=0;i<d.length;i+=20){await wr(d.slice(i,i+20));await new Promise(r=>setTimeout(r,dl))}}
+const bleReady=()=>BLE.api==='cap'?!!BLE.dev:!!BLE.ch;
+async function prtL(L){
+ if(!bleReady()&&!await conn())return;
+ try{await sendBytes(bytesL(L));st('Sent to printer')}
+ catch(e){const m=(e&&e.message)||String(e);st('Print failed: '+m);alert('Print failed: '+m);BLE.dev=null;BLE.ch=null;pinfo()}}
+async function prt(b){return prtL(lines(b))}
+function testPrint(){const L=[],c=(t,bd)=>L.push({t,a:1,b:bd}),l=(t,bd)=>L.push({t,b:bd}),sep=()=>l('-'.repeat(W));
+ c('TEST PRINT',1);sep();l(SHOP.n);l('Date: '+fd(nowL()));l('If you can read this,');l('the printer works.');sep();
+ l('ABCDEFGHIJKLMNOPQRSTUVWXYZ');l('abcdefghijklmnopqrstuvwxyz');l('0123456789 !@#%&*()+=');sep();l('Printer: '+(BLE.name||'-'));l('Mode: '+PW.mode+(PW.slow?' / slow':''));c('Thank you!');
+ prtL(L)}
 
 /* image / pdf / share */
 function canvas(b){const L=lines(b),lh=26,cw=12,w=W*cw,h=L.length*lh+40,c=document.createElement('canvas');c.width=(w+40)*2;c.height=h*2;
@@ -288,46 +347,46 @@ let stream,scanning=false,SM='bill';
 let AC=null,SND=true;try{SND=localStorage.getItem('azhsnd')!=='0'}catch(e){}
 function beepInit(){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}}
 function beep(){if(!SND)return;try{beepInit();const o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=1800;g.gain.value=.12;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+.11)}catch(e){}try{navigator.vibrate&&navigator.vibrate(50)}catch(e){}}
-function sndLbl(){const b=$('sndb');if(b)b.textContent='Scan sound: '+(SND?'ON (band karne ke liye dabao)':'OFF (chalu karne ke liye dabao)')}
+function sndLbl(){const b=$('sndb');if(b)b.textContent='Scan sound: '+(SND?'ON (tap to turn off)':'OFF (tap to turn on)')}
 function togSnd(){SND=!SND;try{localStorage.setItem('azhsnd',SND?'1':'0')}catch(e){}sndLbl();if(SND)beep()}
 async function scan(){beepInit();
- if(!('BarcodeDetector' in window)){alert('Is browser me barcode scan nahi hai. Android Chrome use karo');return}
- try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})}catch(e){alert('Camera permission do');return}
+ if(!('BarcodeDetector' in window)){alert('Barcode scanning is not available in this browser. Use Android Chrome.');return}
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})}catch(e){alert('Allow camera permission');return}
  const v=$('vid');v.srcObject=stream;await v.play();$('scan').style.display='flex';history.pushState({t:curT,o:1},'');scanning=true;const det=new BarcodeDetector();
  while(scanning){try{const r=await det.detect(v);if(r.length){const code=r[0].rawValue;beep();stopScan();history.back();SM==='prod'?prodCode(code,true):gotCode(code);return}}catch(e){}await new Promise(r=>setTimeout(r,250))}}
 function stopScan(){scanning=false;if(stream)stream.getTracks().forEach(t=>t.stop());$('scan').style.display='none'}
 function gotCode(code){let p=DB.prod[code];
- if(!p){const n=prompt('Naya product ('+code+')\nProduct ka naam:');if(!n)return;const r=prompt('Sale rate (Rs):');if(r===null)return;const k=OWN?prompt('Cost price (Rs) - khali chhod sakte ho:'):null;p=DB.prod[code]=mkp(n,r,k);save()}
+ if(!p){const n=prompt('New product ('+code+')\nProduct name:');if(!n)return;const r=prompt('Sale rate (Rs):');if(r===null)return;const k=OWN?prompt('Cost price (Rs) - leave blank to skip:'):null;p=DB.prod[code]=mkp(n,r,k);save()}
  items=items.filter(x=>x.n||x.r);const e=items.find(x=>x.c===code);
  if(e)e.q=(+e.q||0)+1;else items.push({c:code,n:p.n,s:'',r:p.r,q:1,d:'',k:p.k==null?'':p.k});rItems()}
 
 /* products */
 function prodCode(code,again){const p=DB.prod[code];
- if(p)alert(p.n+' - Rs '+f(p.r)+' pehle se saved hai');
- else{const n=prompt('Naya product ('+code+')\nNaam:');if(n){const r=prompt('Sale rate (Rs):');if(r!==null){if(!OWN)toast('Cost nahi pucha. Cost ke liye pehle aankh wala Owner view kholo');const k=OWN?prompt('Cost price (Rs) - khali chhod sakte ho:'):null;DB.prod[code]=mkp(n,r,k);save();const sq=prompt('Stock (kitne piece hain)? khali = track nahi');if(sq!==null&&sq.trim()!==''&&!isNaN(+sq)){DBX.stock[code]=+sq;xsave();window.cloudStock&&cloudStock()}rProd()}}}
+ if(p)alert(p.n+' - Rs '+f(p.r)+' is already saved');
+ else{const n=prompt('New product ('+code+')\nName:');if(n){const r=prompt('Sale rate (Rs):');if(r!==null){if(!OWN)toast('Cost was not asked. Turn on Owner view (eye icon) first to enter cost.');const k=OWN?prompt('Cost price (Rs) - leave blank to skip:'):null;DB.prod[code]=mkp(n,r,k);save();const sq=prompt('Stock (how many pieces)? Leave blank to not track');if(sq!==null&&sq.trim()!==''&&!isNaN(+sq)){DBX.stock[code]=+sq;xsave();window.cloudStock&&cloudStock()}rProd()}}}
  if(again)setTimeout(scan,300)}
 function pAdd(){const c=prompt('Barcode number:');if(c&&c.trim())prodCode(c.trim(),false)}
 function rProd(){const q=($('pq').value||'').toLowerCase();
  const e=Object.entries(DB.prod).filter(([c,p])=>(c+p.n).toLowerCase().includes(q)).sort((a,b)=>String(a[1].n).localeCompare(b[1].n));
- $('plist').innerHTML=e.map(([c,p])=>`<div class="card bill"><div class="bh"><b>${esc(p.n)}</b><span class="badge bl">₹${f(p.r)}</span></div><div class="kv"><div><span>Barcode</span> ${esc(c)}</div><div><span>Stock</span> ${stkTxt(c)}</div><div class="pv"><span>Cost</span> ${p.k==null?'-':'₹'+f(p.k)}</div><div class="pv"><span>Profit/pc</span> ${p.k==null?'-':'<b class="pos">₹'+f(p.r-p.k)+'</b>'}</div></div><div class="acts"><button class="ob gn" data-c="${esc(c)}" onclick="pStock(this.dataset.c)">+ Stock</button><button class="ob bl" data-c="${esc(c)}" onclick="pEdit(this.dataset.c)">Edit</button><button class="ob rd" data-c="${esc(c)}" onclick="pDel(this.dataset.c)">Delete</button></div></div>`).join('')||'<p class="m">Koi product nahi</p>';
+ $('plist').innerHTML=e.map(([c,p])=>`<div class="card bill ac-${DBX.stock[c]!==undefined&&DBX.stock[c]<=3?'rd':'gn'}"><div class="bh"><b>${esc(p.n)}</b><span class="badge bl">${fm(p.r)}</span></div><div class="kv"><div><span>Barcode</span> ${esc(c)}</div><div><span>Stock</span> ${stkTxt(c)}</div><div class="pv"><span>Cost</span> ${p.k==null?'-':fm(p.k)}</div><div class="pv"><span>Profit/pc</span> ${p.k==null?'-':'<b class="pos">'+fm(p.r-p.k)+'</b>'}</div></div><div class="acts"><button class="ob gn" data-c="${esc(c)}" onclick="pStock(this.dataset.c)">${I.plus}Stock</button><button class="ob bl" data-c="${esc(c)}" onclick="pEdit(this.dataset.c)">${I.edit}Edit</button><button class="ob rd" data-c="${esc(c)}" onclick="pDel(this.dataset.c)">${I.del}Delete</button></div></div>`).join('')||emp(I.box,'No products yet','Scan or add a product to get started');
  $('pcnt').textContent=e.length}
-function pEdit(c){const p=DB.prod[c],n=prompt('Naam',p.n);if(n===null)return;const r=prompt('Sale rate (Rs)',p.r);if(r===null)return;const k=OWN?prompt('Cost price (Rs) - khali = nahi',p.k==null?'':p.k):(p.k==null?'':p.k);if(k===null)return;DB.prod[c]=mkp(n||p.n,r,k);save();rProd()}
-function pDel(c){if(confirm('Delete karna hai?')){delete DB.prod[c];delete DBX.stock[c];xsave();window.cloudStock&&cloudStock();save();rProd()}}
+function pEdit(c){const p=DB.prod[c],n=prompt('Name',p.n);if(n===null)return;const r=prompt('Sale rate (Rs)',p.r);if(r===null)return;const k=OWN?prompt('Cost price (Rs) - blank = none',p.k==null?'':p.k):(p.k==null?'':p.k);if(k===null)return;DB.prod[c]=mkp(n||p.n,r,k);save();rProd()}
+function pDel(c){if(confirm('Delete this product?')){delete DB.prod[c];delete DBX.stock[c];xsave();window.cloudStock&&cloudStock();save();rProd()}}
 
 /* reset */
 const PINH='91409655bad2ccce00ee9376f233d4e5d3a8cd290bef2557ad9d68830e667615';
 let pinRes=null;
 const sha=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(x=>x.toString(16).padStart(2,'0')).join('');
-function askPin(m){return new Promise(r=>{pinRes=r;$('pmsg').textContent=m||'Reset karne ke liye PIN daalo';$('pv').value='';$('pin').style.display='flex';setTimeout(()=>$('pv').focus(),50)})}
+function askPin(m){return new Promise(r=>{pinRes=r;$('pmsg').textContent=m||'Enter PIN to reset';$('pv').value='';$('pin').style.display='flex';setTimeout(()=>$('pv').focus(),50)})}
 function pinDone(ok){$('pin').style.display='none';if(pinRes){pinRes(ok?$('pv').value.trim():null);pinRes=null}}
 async function doReset(){
  const v=await askPin();if(v===null)return;
- if(await sha(v)!==PINH){alert('Galat PIN');return}
- if(!confirm('Sab bills, customers aur products delete ho jayenge. Pehle backup file download hogi. Aage badhna hai?'))return;
+ if(await sha(v)!==PINH){alert('Wrong PIN');return}
+ if(!confirm('All bills, customers and products will be deleted. A backup file will download first. Continue?'))return;
  bk();
  const ok=window.cloudReset?await Promise.race([cloudReset(),new Promise(r=>setTimeout(()=>r(false),10000))]):true;
- if(!ok){alert('Cloud data nahi hata. Internet check karke dobara try karo.');return}
- DB={bills:[],prod:{},next:1,terms:DB.terms,upi:DB.upi||''};DBX={stock:{},jobs:[],nj:1};xsave();saveL();reset();show(0);st('App reset ho gaya. Invoice AZH1 se shuru')}
+ if(!ok){alert('Cloud data was not deleted. Check your internet and try again.');return}
+ DB={bills:[],prod:{},next:1,terms:DB.terms,upi:DB.upi||''};DBX={stock:{},jobs:[],nj:1};xsave();saveL();reset();show(0);st('App reset. Invoices start again from AZH1')}
 
 /* bill link (customer view) */
 const b64e=o=>{const by=new TextEncoder().encode(JSON.stringify(o));let t='';by.forEach(x=>t+=String.fromCharCode(x));return btoa(t).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
@@ -354,24 +413,24 @@ const mpGet=()=>{try{return JSON.parse(localStorage.getItem('azhmp')||'null')}ca
 const hasMP=()=>!!mpGet();
 const mpHash=(pin,salt)=>sha(salt+':'+pin);
 async function mpCheck(pin){const m=mpGet();return !!m&&await mpHash(pin,m.s)===m.h}
-async function mpStore(pin){const s=Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem('azhmp',JSON.stringify({s,h:await mpHash(pin,s)}))}catch(e){alert('MPIN save nahi hua')}}
+async function mpStore(pin){const s=Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem('azhmp',JSON.stringify({s,h:await mpHash(pin,s)}))}catch(e){alert('Could not save MPIN')}}
 let tries=0,lockedUntil=0,hiddenAt=0;
 function showLock(){if(!hasMP())return;$('lock').style.display='flex';$('lv').value='';$('lerr2').textContent='';setTimeout(()=>$('lv').focus(),80)}
 async function unlock(){
- if(Date.now()<lockedUntil){$('lerr2').textContent='Thodi der baad try karo';return}
+ if(Date.now()<lockedUntil){$('lerr2').textContent='Try again in a moment';return}
  if(await mpCheck($('lv').value.trim())){tries=0;$('lock').style.display='none';$('lv').value='';$('lerr2').textContent=''}
- else{tries++;$('lv').value='';if(tries>=5){tries=0;lockedUntil=Date.now()+30000;$('lerr2').textContent='5 baar galat. 30 second ruko'}else $('lerr2').textContent='Galat MPIN'}}
-function mpLbl(){const on=hasMP();$('mpst').textContent=on?'MPIN ON: Chrome se hatke 30 second baad wapas aane par MPIN puchhega. Cost aur profit dekhne ke liye upar aankh wala icon dabake MPIN daalo.':'MPIN OFF: App bina lock ke khulta hai. Cost aur profit chhupe rakhne ke liye MPIN set karo.';
+ else{tries++;$('lv').value='';if(tries>=5){tries=0;lockedUntil=Date.now()+30000;$('lerr2').textContent='5 wrong attempts. Wait 30 seconds'}else $('lerr2').textContent='Wrong MPIN'}}
+function mpLbl(){const on=hasMP();$('mpst').textContent=on?'MPIN ON: Asks for your MPIN when you return after 30 seconds away. Tap the eye icon at the top and enter MPIN to see cost and profit.':'MPIN OFF: The app opens without a lock. Set an MPIN to keep cost and profit hidden.';
  $('mpb').innerHTML=on?'<button class="g" onclick="mpChange()">Change MPIN</button><button class="d" onclick="mpRemove()">Remove MPIN</button>':'<button onclick="mpSet()">Set MPIN</button>'}
 async function mpNew(){
- const a=await askPin('Naya MPIN daalo (4 se 10 digit)');if(a===null)return false;
- if(!/^\d{4,10}$/.test(a)){alert('MPIN sirf 4 se 10 digit ka number ho');return false}
- const b=await askPin('MPIN dobara daalo');if(b===null)return false;
- if(a!==b){alert('Dono MPIN match nahi hue');return false}
+ const a=await askPin('Enter a new MPIN (4 to 10 digits)');if(a===null)return false;
+ if(!/^\d{4,10}$/.test(a)){alert('MPIN must be a 4 to 10 digit number');return false}
+ const b=await askPin('Enter MPIN again');if(b===null)return false;
+ if(a!==b){alert('The two MPINs do not match');return false}
  await mpStore(a);return true}
-async function mpSet(){if(await mpNew()){mpLbl();toast('MPIN set ho gaya')}}
-async function mpChange(){const o=await askPin('Purana MPIN daalo');if(o===null)return;if(!await mpCheck(o)){alert('Galat MPIN');return}if(await mpNew()){mpLbl();toast('MPIN badal gaya')}}
-async function mpRemove(){const o=await askPin('MPIN daalo (remove karne ke liye)');if(o===null)return;if(!await mpCheck(o)){alert('Galat MPIN');return}try{localStorage.removeItem('azhmp')}catch(e){}mpLbl();toast('MPIN hata diya')}
+async function mpSet(){if(await mpNew()){mpLbl();toast('MPIN set')}}
+async function mpChange(){const o=await askPin('Enter current MPIN');if(o===null)return;if(!await mpCheck(o)){alert('Wrong MPIN');return}if(await mpNew()){mpLbl();toast('MPIN changed')}}
+async function mpRemove(){const o=await askPin('Enter MPIN to remove it');if(o===null)return;if(!await mpCheck(o)){alert('Wrong MPIN');return}try{localStorage.removeItem('azhmp')}catch(e){}mpLbl();toast('MPIN removed')}
 document.addEventListener('visibilitychange',()=>{
  if(window.__VIEW)return;if(document.hidden){hiddenAt=Date.now();return}
  if(!hiddenAt)return;const away=Date.now()-hiddenAt;hiddenAt=0;if(away<AWAY)return;
@@ -386,8 +445,8 @@ const xsave=()=>{try{localStorage.setItem('azhx',JSON.stringify(DBX))}catch(e){}
 const nowL=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16);
 function setPM(m){PM=m;qrHide=false;qrLast='';['Cash','UPI','Card'].forEach(k=>{const e=$('pm_'+k);if(e)e.classList.toggle('sel',k===m)});renderQR()}
 function stk(items,sign){let ch=false;(items||[]).forEach(x=>{if(x.c&&DBX.stock[x.c]!==undefined){DBX.stock[x.c]+=sign*(+x.q||0);ch=true}});if(ch){xsave();window.cloudStock&&cloudStock()}}
-function stkTxt(c){const n=DBX.stock[c];return n===undefined?'-':(n<=3?'<b class="neg">'+n+' (kam)</b>':'<b>'+n+'</b>')}
-function pStock(c){const q=prompt('Stock me kitna jodna hai? (kam karne ke liye minus daalo)');if(q===null||q.trim()===''||isNaN(+q))return;DBX.stock[c]=(DBX.stock[c]||0)+ +q;xsave();window.cloudStock&&cloudStock();rProd()}
+function stkTxt(c){const n=DBX.stock[c];return n===undefined?'-':(n<=3?'<b class="neg">'+n+' (low)</b>':'<b>'+n+'</b>')}
+function pStock(c){const q=prompt('How much stock to add? (use a minus sign to reduce)');if(q===null||q.trim()===''||isNaN(+q))return;DBX.stock[c]=(DBX.stock[c]||0)+ +q;xsave();window.cloudStock&&cloudStock();rProd()}
 const JST=['Received','In repair','Ready','Delivered'],JBC=['bl','am','gn','gy'];
 let jEdit=null,JF='All';
 function jNew(){jEdit=null;['jn','jp','jd','ji','jx','je','ja','jnote'].forEach(k=>$(k).value='');$('jform').style.display='block';$('jn').focus()}
@@ -395,21 +454,21 @@ function jCancel(){$('jform').style.display='none';jEdit=null}
 function jSave(){
  const old=jEdit?DBX.jobs.find(x=>x.id===jEdit):null;
  const j=Object.assign({},old||{},{id:jEdit||'AZJ'+(DBX.nj||1),date:old?old.date:nowL(),cn:$('jn').value.trim(),cp:$('jp').value.trim(),dev:$('jd').value.trim(),imei:$('ji').value.trim(),iss:$('jx').value.trim(),est:+$('je').value||0,adv:+$('ja').value||0,note:$('jnote').value.trim(),st:old?old.st:0});
- if(!j.cn&&!j.cp){alert('Customer ka naam ya phone daalo');return}
- if(!j.dev){alert('Device ka model daalo');return}
+ if(!j.cn&&!j.cp){alert('Enter customer name or phone');return}
+ if(!j.dev){alert('Enter the device model');return}
  if(old)DBX.jobs[DBX.jobs.indexOf(old)]=j;else{DBX.jobs.push(j);DBX.nj=(DBX.nj||1)+1}
- xsave();window.cloudJob&&cloudJob(j);jCancel();rJobs();toast('Job '+j.id+' save hua')}
+ xsave();window.cloudJob&&cloudJob(j);jCancel();rJobs();toast('Job '+j.id+' saved')}
 function jEditStart(id){const j=DBX.jobs.find(x=>x.id===id);if(!j)return;jEdit=id;
  $('jn').value=j.cn;$('jp').value=j.cp;$('jd').value=j.dev;$('ji').value=j.imei||'';$('jx').value=j.iss||'';$('je').value=j.est||'';$('ja').value=j.adv||'';$('jnote').value=j.note||'';
  $('jform').style.display='block';window.scrollTo(0,0)}
 function jNext(id){const j=DBX.jobs.find(x=>x.id===id);if(!j||j.st>=3)return;j.st++;xsave();window.cloudJob&&cloudJob(j);rJobs();
- if(j.st===2&&waNum(j.cp)&&confirm('Customer ko WhatsApp se batayein ki phone ready hai?'))jWA(id)}
+ if(j.st===2&&waNum(j.cp)&&confirm('Notify the customer on WhatsApp that the phone is ready?'))jWA(id)}
 function jMsg(j){const R='\u20b9';let x='*'+SHOP.n+'*\nJob: '+j.id+'\nDevice: '+j.dev+(j.iss?'\nProblem: '+j.iss:'')+'\nStatus: *'+JST[j.st]+'*';
- if(j.st===2)x+='\nPhone ready hai, dukaan se le jayein.';
+ if(j.st===2)x+='\nYour phone is ready for pickup.';
  if(j.est)x+='\nEstimate: '+R+f(j.est);
- if(j.adv)x+='\nAdvance: '+R+f(j.adv)+(j.est?'\nBaki: '+R+f(Math.max(0,j.est-j.adv)):'');
+ if(j.adv)x+='\nAdvance: '+R+f(j.adv)+(j.est?'\nBalance: '+R+f(Math.max(0,j.est-j.adv)):'');
  return x+'\n'+SHOP.p}
-function jWA(id){const j=DBX.jobs.find(x=>x.id===id);if(!j)return;const n=waNum(j.cp);if(!n){alert('Customer ka sahi phone number daalo (Edit se)');return}
+function jWA(id){const j=DBX.jobs.find(x=>x.id===id);if(!j)return;const n=waNum(j.cp);if(!n){alert('Enter a valid customer phone number (use Edit)');return}
  window.open('https://wa.me/'+n+'?text='+encodeURIComponent(jMsg(j)),'_blank')}
 function jLines(j){const L=[],c=(t,bd)=>L.push({t,a:1,b:bd}),l=(t,bd)=>L.push({t,b:bd}),sep=()=>l('-'.repeat(W)),
  lr=(a,r,bd)=>l(a.slice(0,W-r.length-1).padEnd(W-r.length)+r,bd),wrap=s=>s.match(new RegExp('.{1,'+W+'}','g'))||[];
@@ -417,21 +476,20 @@ function jLines(j){const L=[],c=(t,bd)=>L.push({t,a:1,b:bd}),l=(t,bd)=>L.push({t
  l('Job: '+j.id,1);l('Date: '+fd(j.date));if(j.cn)l('Name: '+j.cn);if(j.cp)l('Phone: '+j.cp);sep();
  wrap('Device: '+j.dev).forEach(x=>l(x));if(j.imei)wrap('IMEI: '+j.imei).forEach(x=>l(x));if(j.iss)wrap('Problem: '+j.iss).forEach(x=>l(x));sep();
  if(j.est)lr('Estimate',f(j.est));lr('Advance',f(j.adv));if(j.est)lr('Balance',f(Math.max(0,j.est-j.adv)),1);sep();
- wrap('Terms: '+DB.terms).forEach(x=>l(x));c('Slip saath layein');return L}
+ wrap('Terms: '+DB.terms).forEach(x=>l(x));c('Bring this slip when collecting');return L}
 function bytesL(L){const o=[0x1b,0x40],enc=s=>[...s].map(k=>{const c=k.charCodeAt(0);return c>31&&c<127?c:63});L.forEach(x=>o.push(0x1b,0x61,x.a?1:0,0x1b,0x45,x.b?1:0,...enc(x.t),10));o.push(0x1b,0x61,0,0x1b,0x45,0,10,10,10);return new Uint8Array(o)}
-async function prtL(L){if(!ch&&!await conn())return;try{const d=bytesL(L);for(let i=0;i<d.length;i+=20){const p=d.slice(i,i+20);ch.properties.writeWithoutResponse?await ch.writeValueWithoutResponse(p):await ch.writeValue(p);await new Promise(r=>setTimeout(r,12))}st('Print bhej diya')}catch(e){st('Print fail: '+e.message);ch=null}}
 function jPrint(id){const j=DBX.jobs.find(x=>x.id===id);if(j)prtL(jLines(j))}
 function jBill(id){const j=DBX.jobs.find(x=>x.id===id);if(!j)return;
  editId=null;$('eb').style.display='none';jobLink=id;
  $('cn').value=j.cn||'';$('cp').value=j.cp||'';$('paid').value=j.adv||'';$('dt').value=nowL();
- items=[{c:'',n:'Repair - '+j.dev,s:j.imei||'',r:j.est||'',q:1,d:'',k:''}];setPM('Cash');rItems();go(0);toast('Bill bhar diya. Save karne par job Delivered ho jayegi')}
-function jDel(id){if(!confirm('Job '+id+' delete karna hai?'))return;DBX.jobs=DBX.jobs.filter(x=>x.id!==id);xsave();window.cloudJobDel&&cloudJobDel(id);rJobs()}
+ items=[{c:'',n:'Repair - '+j.dev,s:j.imei||'',r:j.est||'',q:1,d:'',k:''}];setPM('Cash');rItems();go(0);toast('Bill filled in. Saving it will mark the job Delivered')}
+function jDel(id){if(!confirm('Delete job '+id+'?'))return;DBX.jobs=DBX.jobs.filter(x=>x.id!==id);xsave();window.cloudJobDel&&cloudJobDel(id);rJobs()}
 function rJobs(){const q=($('jq').value||'').toLowerCase();
  $('jchips').innerHTML=['All',...JST].map(s=>`<button class="ob ${JF===s?'sel':''}" onclick="JF='${s}';rJobs()">${s}${s==='All'?'':' ('+DBX.jobs.filter(j=>JST[j.st]===s).length+')'}</button>`).join('');
  const L=DBX.jobs.slice().reverse().filter(j=>(JF==='All'||JST[j.st]===JF)&&(j.id+(j.cn||'')+(j.cp||'')+(j.dev||'')+(j.imei||'')).toLowerCase().includes(q));
- $('jlist').innerHTML=L.map(j=>`<div class="card bill"><div class="bh"><b>${j.id}</b><span class="badge ${JBC[j.st]}">${JST[j.st]}</span></div>
- <div class="kv"><div><span>Device</span> ${esc(j.dev)}</div><div><span>Customer</span> ${esc(j.cn||'N/A')}</div><div><span>Phone</span> ${esc(j.cp||'-')}</div><div><span>Date</span> ${fd(j.date)}</div><div style="grid-column:1/3"><span>Problem</span> ${esc(j.iss||'-')}</div><div><span>Estimate</span> \u20b9${f(j.est)}</div><div><span>Advance</span> \u20b9${f(j.adv)}</div></div>
- <div class="acts">${j.st<3?`<button class="ob gn" onclick="jNext('${j.id}')">Mark: ${JST[j.st+1]}</button>`:''}<button class="ob gn" onclick="jWA('${j.id}')">WhatsApp</button><button class="ob gn" onclick="jPrint('${j.id}')">Slip</button><button class="ob bl" onclick="jBill('${j.id}')">Make bill</button><button class="ob bl" onclick="jEditStart('${j.id}')">Edit</button><button class="ob rd" onclick="jDel('${j.id}')">Delete</button></div></div>`).join('')||'<p class="m">Koi job nahi</p>'}
+ $('jlist').innerHTML=L.map(j=>`<div class="card bill ac-${JBC[j.st]}"><div class="bh"><b>${j.id}</b><span class="badge ${JBC[j.st]}">${JST[j.st]}</span></div>
+ <div class="kv"><div><span>Device</span> ${esc(j.dev)}</div><div><span>Customer</span> ${esc(j.cn||'N/A')}</div><div><span>Phone</span> ${esc(j.cp||'-')}</div><div><span>Date</span> ${fdu(j.date)}</div><div style="grid-column:1/3"><span>Problem</span> ${esc(j.iss||'-')}</div><div><span>Estimate</span> ${fm(j.est)}</div><div><span>Advance</span> ${fm(j.adv)}</div></div>
+ <div class="acts">${j.st<3?`<button class="ob gn" onclick="jNext('${j.id}')">${I.chk}Mark: ${JST[j.st+1]}</button>`:''}<button class="ob gn" onclick="jWA('${j.id}')">${I.wa}WhatsApp</button><button class="ob gn" onclick="jPrint('${j.id}')">${I.doc}Slip</button><button class="ob bl" onclick="jBill('${j.id}')">${I.doc}Make bill</button><button class="ob bl" onclick="jEditStart('${j.id}')">${I.edit}Edit</button><button class="ob rd" onclick="jDel('${j.id}')">${I.del}Delete</button></div></div>`).join('')||emp(I.tool,'No repair jobs','Tap New repair job to add one')}
 
 /* QR code generator (byte mode, error correction M, versions 1-10) */
 function qrMatrix(text){
@@ -503,39 +561,47 @@ function drawQR(cv,text){const mx=qrMatrix(text);if(!mx)return false;const n=mx.
 function renderQR(){const box=$('qrbox'),due=tots(cur()).due;
  if(PM!=='UPI'||qrHide||due<=0.005){box.style.display='none';qrLast='';return}
  box.style.display='block';
- if(!upiOk(DB.upi)){$('qrmsg').textContent='UPI ID set nahi hai. Settings me apna UPI ID daalo.';$('qrmsg').style.display='block';$('qrmain').style.display='none';return}
+ if(!upiOk(DB.upi)){$('qrmsg').textContent='UPI ID not set. Add your UPI ID in Settings.';$('qrmsg').style.display='block';$('qrmain').style.display='none';return}
  const a=Math.round(due*100)/100,link=upiLink(a,$('inv').value||'Bill');
  $('qram').textContent=f(a);
- if(link!==qrLast){qrLast=link;if(!drawQR($('qrc'),link)){$('qrmsg').textContent='QR nahi ban paya';$('qrmsg').style.display='block';$('qrmain').style.display='none';return}}
+ if(link!==qrLast){qrLast=link;if(!drawQR($('qrc'),link)){$('qrmsg').textContent='Could not generate QR';$('qrmsg').style.display='block';$('qrmain').style.display='none';return}}
  $('qrmsg').style.display='none';$('qrmain').style.display='block'}
 function qrPaid(){const a=Math.round(tots(cur()).due*100)/100;if(a<=0)return;
- if(!confirm('\u20b9'+f(a)+' aapke UPI app me aa gaye? Pehle apne UPI app ya SMS me dekh lo.'))return;
- $('paid').value=Math.round(((+$('paid').value||0)+a)*100)/100;qrHide=true;calc();toast('Payment mil gaya, paid me jod diya')}
+ if(!confirm('\u20b9'+f(a)+' received in your UPI app? Check your UPI app or SMS first.'))return;
+ $('paid').value=Math.round(((+$('paid').value||0)+a)*100)/100;qrHide=true;calc();toast('Payment received, added to Paid')}
 function qrCancel(){qrHide=true;renderQR()}
-function saveUPI(){const v=($('upiid').value||'').trim();if(v&&!upiOk(v)){alert('UPI ID sahi nahi lag raha (jaise 9933831321@ybl)');return}
- DB.upi=v;save();qrHide=false;qrLast='';$('upist').textContent=v?'Save ho gaya':'UPI ID hata diya';renderQR()}
+function saveUPI(){const v=($('upiid').value||'').trim();if(v&&!upiOk(v)){alert('That UPI ID looks invalid (example: 9933831321@ybl)');return}
+ DB.upi=v;save();qrHide=false;qrLast='';$('upist').textContent=v?'Saved':'UPI ID removed';renderQR()}
 
 /* owner view (cost and profit hidden by default) */
 let OWN=false,ownT=null;
 const EYE_ON='<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',EYE_OFF='<path d="M3 3l18 18"/><path d="M10.6 6.1A9.7 9.7 0 0 1 12 6c5 0 8.5 4 9.5 6a12 12 0 0 1-2.6 3.3M6.6 6.7A12 12 0 0 0 2.5 12c1 2 4.5 6 9.5 6a9.6 9.6 0 0 0 3.2-.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>';
 function setOwn(v){OWN=v;document.body.classList.toggle('own',v);$('eyes').innerHTML=v?EYE_ON:EYE_OFF;$('eyeb').classList.toggle('on',v);clearTimeout(ownT);
- if(v)ownT=setTimeout(()=>{setOwn(false);toast('Owner view band ho gaya')},120000)}
+ if(v)ownT=setTimeout(()=>{setOwn(false);toast('Owner view turned off')},120000)}
 async function togOwn(){if(OWN){setOwn(false);return}
- if(!hasMP()){alert('Cost aur profit chhupane ke liye pehle Settings me App MPIN set karo. MPIN set hone ke baad hi ye aankh wala icon cost dikhayega.');return}
- const v=await askPin('Owner view ke liye MPIN daalo');if(v===null)return;
- if(!await mpCheck(v)){alert('Galat MPIN');return}
- setOwn(true);toast('Owner view chalu (2 minute baad band)')}
+ if(!hasMP()){alert('To keep cost and profit hidden, first set an App MPIN in Settings. The eye icon shows cost only after an MPIN is set.');return}
+ const v=await askPin('Enter MPIN for Owner view');if(v===null)return;
+ if(!await mpCheck(v)){alert('Wrong MPIN');return}
+ setOwn(true);toast('Owner view on (turns off after 2 minutes)')}
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&OWN)setOwn(false)});
+
+/* ui helpers */
+const fm=n=>{const v=+n||0;return (v<0?'-':'')+'\u20b9'+Math.abs(v).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2})};
+const fdu=s=>{const d=new Date(s);if(isNaN(d))return '';const o={day:'numeric',month:'short',hour:'numeric',minute:'2-digit'};if(d.getFullYear()!==new Date().getFullYear())o.year='numeric';return d.toLocaleString('en-IN',o)};
+const svg=p=>'<svg viewBox="0 0 24 24">'+p+'</svg>';
+const I={print:svg('<path d="M7 9V3h10v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/>'),image:svg('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/>'),pdf:svg('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>'),wa:svg('<path d="M3 21l1.6-4.9A8.5 8.5 0 1 1 8 19.4z"/>'),edit:svg('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'),del:svg('<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>'),chk:svg('<path d="M5 12l5 5 9-10"/>'),plus:svg('<path d="M12 5v14M5 12h14"/>'),tool:svg('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.1L3 17.7 6.3 21l6.3-6.3a4 4 0 0 0 5.1-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>'),box:svg('<path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/>'),user:svg('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"/>'),doc:svg('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>')};
+const emp=(ic,t,h)=>'<div class="empty"><div class="eic">'+ic+'</div><b>'+t+'</b><span>'+h+'</span></div>';
+function payFull(){$('paid').value=Math.round(tots(cur()).total*100)/100||'';calc()}
 
 /* history, customers, backup */
 function rHist(){const q=$('hq').value.toLowerCase(),d1=$('hf').value,d2=$('ht').value;
  const L=DB.bills.slice().reverse().filter(b=>{const d=(b.date||'').slice(0,10);return (b.id+(b.cn||'')+(b.cp||'')).toLowerCase().includes(q)&&(!d1||d>=d1)&&(!d2||d<=d2)});
  let sale=0,paid=0,pf=0,nc=0;L.forEach(b=>{sale+=tots(b).total;paid+=+b.paid||0;const q=prof(b);pf+=q.p;if(q.miss)nc++});
- const mo={};L.forEach(b=>{const k=b.pm||'Other';mo[k]=(mo[k]||0)+(+b.paid||0)});const mtxt=Object.entries(mo).map(([k,v])=>k+' ₹'+f(v)).join(' &middot; ');
- $('hsum').innerHTML=`<div class="kpi"><small>Total sale</small><b>₹${f(sale)}</b><small>${L.length} bill</small></div><div class="row kp2"><div><small>Received</small><b class="gr">₹${f(paid)}</b></div><div><small>Due</small><b class="rd">₹${f(sale-paid)}</b></div><div class="pv"><small>Profit</small><b class="gr">₹${f(pf)}</b></div></div><small style="margin-top:10px">${mtxt}</small>${nc?`<small class="pv" style="margin-top:10px">${nc} bill me cost nahi (profit me poora nahi ginta)</small>`:''}`;
- $('hist').innerHTML=L.map(b=>{const t=tots(b);return `<div class="card bill"><div class="bh"><b>${b.id}</b><span class="badge ${t.due>0?'rd':'gn'}">${t.due>0?'Due':'Paid'}</span></div>
- <div class="kv"><div><span>Date</span> ${fd(b.date)}</div><div><span>Customer</span> ${esc(b.cn||'N/A')}</div><div><span>Phone</span> ${esc(b.cp||'\u2014')}</div><div><span>Items</span> ${b.items.length}</div><div><span>Total</span> <b>₹${f(t.total)}</b></div><div><span>Due</span> <b class="${t.due>0?'neg':'pos'}">₹${f(t.due)}</b></div>${(()=>{const q=prof(b);return `<div class="pv"><span>Profit</span> ${q.known?`<b class="${q.p>=0?'pos':'neg'}">₹${f(q.p)}${q.miss?' *':''}</b>`:'<span style="font-size:13px">cost nahi</span>'}</div>`})()}</div>
- <div class="acts"><button class="ob gn" onclick="act('${b.id}','p')">Print</button><button class="ob gn" onclick="act('${b.id}','i')">Image</button><button class="ob gn" onclick="act('${b.id}','f')">PDF</button><button class="ob gn" onclick="act('${b.id}','w')">WhatsApp</button><button class="ob bl" onclick="act('${b.id}','e')">Edit</button><button class="ob rd" onclick="act('${b.id}','x')">Delete</button>${t.due>0?`<button class="ob gn" onclick="act('${b.id}','r')">Due received</button>`:''}</div></div>`}).join('')||'<p class="m">Koi bill nahi</p>'}
+ const mo={};L.forEach(b=>{const k=b.pm||'Other';mo[k]=(mo[k]||0)+(+b.paid||0)});const mtxt=Object.entries(mo).map(([k,v])=>k+' '+fm(v)).join(' &middot; ');
+ $('hsum').innerHTML=`<div class="kpi"><small>Total sale</small><b>${fm(sale)}</b><small>${L.length} bill${L.length===1?'':'s'}</small></div><div class="row kp2"><div><small>Received</small><b class="gr">${fm(paid)}</b></div><div><small>Due</small><b class="rd">${fm(sale-paid)}</b></div><div class="pv"><small>Profit</small><b class="gr">${fm(pf)}</b></div></div><small style="margin-top:10px">${mtxt}</small>${nc?`<small class="pv" style="margin-top:10px">${nc} bill(s) without cost (not fully counted in profit)</small>`:''}`;
+ $('hist').innerHTML=L.map(b=>{const t=tots(b);return `<div class="card bill ac-${t.due>0?'rd':'gn'}"><div class="bh"><b>${b.id}</b><span class="badge ${t.due>0?'rd':'gn'}">${t.due>0?'Due':'Paid'}</span></div>
+ <div class="kv"><div><span>Date</span> ${fdu(b.date)}</div><div><span>Customer</span> ${esc(b.cn||'N/A')}</div><div><span>Phone</span> ${esc(b.cp||'\u2014')}</div><div><span>Items</span> ${b.items.length}</div><div><span>Total</span> <b>${fm(t.total)}</b></div><div><span>Due</span> <b class="${t.due>0?'neg':'pos'}">${fm(t.due)}</b></div>${(()=>{const q=prof(b);return `<div class="pv"><span>Profit</span> ${q.known?`<b class="${q.p>=0?'pos':'neg'}">${fm(q.p)}${q.miss?' *':''}</b>`:'<span style="font-size:13px">no cost</span>'}</div>`})()}</div>
+ <div class="acts"><button class="ob gn" onclick="act('${b.id}','p')">${I.print}Print</button><button class="ob gn" onclick="act('${b.id}','i')">${I.image}Image</button><button class="ob gn" onclick="act('${b.id}','f')">${I.pdf}PDF</button><button class="ob gn" onclick="act('${b.id}','w')">${I.wa}WhatsApp</button><button class="ob bl" onclick="act('${b.id}','e')">${I.edit}Edit</button><button class="ob rd" onclick="act('${b.id}','x')">${I.del}Delete</button>${t.due>0?`<button class="ob gn" onclick="act('${b.id}','r')">${I.chk}Due received</button>`:''}</div></div>`}).join('')||emp(I.doc,'No bills found','Saved bills will appear here')}
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 function hToday(){$('hf').value=$('ht').value=today();rHist()}
 function hClear(){$('hq').value=$('hf').value=$('ht').value='';rHist()}
@@ -543,17 +609,17 @@ function startEdit(id){const b=DB.bills.find(x=>x.id===id);if(!b)return;editId=i
  $('cn').value=b.cn||'';$('cp').value=b.cp||'';$('ca').value=b.ca||'';$('dAddr').open=!!b.ca;$('paid').value=b.paid||'';$('dt').value=b.date||'';$('terms').value=b.terms||'';$('inv').value=id;setPM(b.pm||'Cash');
  $('eb').style.display='block';$('ebn').textContent=id;tab(0);rItems();window.scrollTo(0,0)}
 function act(id,k){const b=DB.bills.find(x=>x.id===id);if(k==='p')prt(b);if(k==='i')img(b);if(k==='f')pdf(b);
- if(k==='r'){const a=prompt('Kitna mila? (Rs)');if(+a>0){b.paid=(+b.paid||0)+ +a;save();cloudB(b);rHist()}}
- if(k==='w'){let n=waNum(b.cp);if(!n){const q=prompt('Customer ka WhatsApp number:');n=waNum(q);if(!n){if(q!==null)alert('Sahi number daalo');return}b.cp=q.trim();save();cloudB(b)}openWA(b,n)}
+ if(k==='r'){const a=prompt('Amount received? (Rs)');if(+a>0){b.paid=(+b.paid||0)+ +a;save();cloudB(b);rHist()}}
+ if(k==='w'){let n=waNum(b.cp);if(!n){const q=prompt('WhatsApp number of the customer:');n=waNum(q);if(!n){if(q!==null)alert('Enter a valid number');return}b.cp=q.trim();save();cloudB(b)}openWA(b,n)}
  if(k==='e')startEdit(id);
- if(k==='x'&&confirm('Bill '+id+' delete karna hai? Wapas nahi aayega.')){stk(b.items,1);DB.bills=DB.bills.filter(x=>x.id!==id);save();window.cloudDel&&cloudDel(id);rHist()}}
+ if(k==='x'&&confirm('Delete bill '+id+'? This cannot be undone.')){stk(b.items,1);DB.bills=DB.bills.filter(x=>x.id!==id);save();window.cloudDel&&cloudDel(id);rHist()}}
 function rCust(){const m={};DB.bills.forEach(b=>{const k=b.cp||b.cn;if(!k)return;const o=m[k]=m[k]||{n:b.cn,p:b.cp,due:0,c:0};o.due+=tots(b).due;o.c++;o.n=b.cn||o.n});
- $('cust').innerHTML=Object.entries(m).map(([k,o])=>`<div class="card bill" data-k="${esc(k)}" onclick="$('hq').value=this.dataset.k;tab(1)"><div class="bh"><b>${esc(o.n||'N/A')}</b><span class="badge ${o.due>0?'rd':'gn'}">${o.due>0?'Due':'Clear'}</span></div><div class="kv"><div><span>Phone</span> ${esc(o.p||'\u2014')}</div><div><span>Bills</span> ${o.c}</div><div><span>Due</span> <b class="${o.due>0?'neg':'pos'}">₹${f(o.due)}</b></div></div><div class="acts"><button class="ob bl" data-k="${esc(k)}" onclick="event.stopPropagation();cEdit(this.dataset.k)">Edit customer</button></div></div>`).join('')||'<p class="m">Abhi koi customer nahi</p>'}
+ $('cust').innerHTML=Object.entries(m).map(([k,o])=>`<div class="card bill ac-${o.due>0?'rd':'gn'}" data-k="${esc(k)}" onclick="$('hq').value=this.dataset.k;tab(1)"><div class="bh"><b>${esc(o.n||'N/A')}</b><span class="badge ${o.due>0?'rd':'gn'}">${o.due>0?'Due':'Clear'}</span></div><div class="kv"><div><span>Phone</span> ${esc(o.p||'\u2014')}</div><div><span>Bills</span> ${o.c}</div><div><span>Due</span> <b class="${o.due>0?'neg':'pos'}">${fm(o.due)}</b></div></div><div class="acts"><button class="ob bl" data-k="${esc(k)}" onclick="event.stopPropagation();cEdit(this.dataset.k)">${I.edit}Edit customer</button></div></div>`).join('')||emp(I.user,'No customers yet','Customers appear after you save a bill')}
 function cEdit(k){const bs=DB.bills.filter(b=>(b.cp||b.cn)===k);if(!bs.length)return;const l=bs[bs.length-1];
- const n=prompt('Naam',l.cn||'');if(n===null)return;const p=prompt('Phone',l.cp||'');if(p===null)return;const a=prompt('Address',l.ca||'');if(a===null)return;
+ const n=prompt('Name',l.cn||'');if(n===null)return;const p=prompt('Phone',l.cp||'');if(p===null)return;const a=prompt('Address',l.ca||'');if(a===null)return;
  bs.forEach(b=>{b.cn=n.trim();b.cp=p.trim();b.ca=a.trim();cloudB(b)});save();rCust()}
 function bk(){const bl=new Blob([JSON.stringify(Object.assign({},DB,{_x:DBX}))],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='azhari-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
-function rs(i){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.bills))throw 0;DB=Object.assign(DB,d);if(d._x){DBX=Object.assign({stock:{},jobs:[]},d._x);xsave();window.cloudStock&&cloudStock();DBX.jobs.forEach(j=>window.cloudJob&&cloudJob(j))}delete DB._x;save();window.cloudAll&&cloudAll();reset();alert('Restore ho gaya')}catch(e){alert('Galat file')}};if(i.files[0])r.readAsText(i.files[0])}
+function rs(i){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.bills))throw 0;DB=Object.assign(DB,d);if(d._x){DBX=Object.assign({stock:{},jobs:[]},d._x);xsave();window.cloudStock&&cloudStock();DBX.jobs.forEach(j=>window.cloudJob&&cloudJob(j))}delete DB._x;save();window.cloudAll&&cloudAll();reset();alert('Restore complete')}catch(e){alert('Invalid file')}};if(i.files[0])r.readAsText(i.files[0])}
 
 if(VIEW)viewInit(VIEW);else{showLock();reset();history.replaceState({base:1},'');history.pushState({t:0},'');show(0)}
 </script><script type="module">
@@ -576,7 +642,7 @@ async function loadX(){
  const mx=DBX.jobs.reduce((a,j)=>Math.max(a,+String(j.id).replace(/\D/g,'')||0),0);DBX.nj=Math.max(DBX.nj||1,mx+1);xsave();
  if(curT===2)rJobs();if(curT===4)rProd()}
 window.cloudAll=()=>{DB.bills.forEach(window.cloudBill);window.cloudMeta()};
-window.doLogin=async()=>{$('lerr').textContent='';try{await signInWithEmailAndPassword(auth,$('le').value.trim(),$('lp').value)}catch(e){$('lerr').textContent='Email ya password galat hai'}};
+window.doLogin=async()=>{$('lerr').textContent='';try{await signInWithEmailAndPassword(auth,$('le').value.trim(),$('lp').value)}catch(e){$('lerr').textContent='Wrong email or password'}};
 window.doLogout=()=>signOut(auth);
 async function load(){
  const m=await getDoc(doc(db,'meta','main')),s=await getDocs(collection(db,'bills')),cb=s.docs.map(d=>d.data());
@@ -584,11 +650,11 @@ async function load(){
  const mm=m.exists()?m.data():{},n=x=>+String(x.id).replace(/\D/g,'');
  DB.bills=cb.sort((a,b)=>n(a)-n(b));if(mm.prod)DB.prod=mm.prod;if(mm.terms)DB.terms=mm.terms;if(mm.upi)DB.upi=mm.upi;
  DB.next=Math.max(mm.next||1,DB.bills.length?n(DB.bills[DB.bills.length-1])+1:1);
- saveL();reset();st('Cloud se data aa gaya')}
+ saveL();reset();st('Data loaded from cloud')}
 if(!window.__VIEW)onAuthStateChanged(auth,async u=>{
  if(!u){on=false;$('login').style.display='flex';return}
  $('login').style.display='none';on=true;
- try{await load()}catch(e){st('Cloud se load nahi hua, local data chal raha hai')}
+ try{await load()}catch(e){st('Could not load from cloud, using local data')}
  try{await loadX()}catch(e){}});
 </script>
 </body></html>
